@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.OrderDAO;
-import com.example.demo.dao.ProductDAO;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.form.CustomerForm;
 import com.example.demo.model.CartInfo;
@@ -29,10 +29,10 @@ import java.io.IOException;
 public class MainController {
 
     @Autowired
-    private OrderDAO orderDAO;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private ProductDAO productDAO;
+    private ProductRepository productRepository;
 
     @Autowired
     private CustomerFormValidator customerFormValidator;
@@ -76,7 +76,7 @@ public class MainController {
         final int maxResult = 8;
         final int maxNavigationPage = 10;
 
-        PaginationResult<ProductInfo> result = productDAO.queryProducts(page, //
+        PaginationResult<ProductInfo> result = productRepository.queryProducts(page, //
                 maxResult, maxNavigationPage, likeName);
 
         model.addAttribute("paginationProducts", result);
@@ -89,7 +89,7 @@ public class MainController {
 
         Product product = null;
         if (code != null && code.length() > 0) {
-            product = productDAO.findProduct(code);
+            product = productRepository.findProduct(code);
         }
         if (product != null) {
 
@@ -109,7 +109,7 @@ public class MainController {
                                        @RequestParam(value = "code", defaultValue = "") String code) {
         Product product = null;
         if (code != null && code.length() > 0) {
-            product = productDAO.findProduct(code);
+            product = productRepository.findProduct(code);
         }
         if (product != null) {
 
@@ -219,7 +219,7 @@ public class MainController {
             return "redirect:/shoppingCartCustomer";
         }
         try {
-            orderDAO.saveOrder(cartInfo);
+            orderRepository.saveOrder(cartInfo);
         } catch (Exception e) {
 
             return "shoppingCartConfirmation";
@@ -250,11 +250,11 @@ public class MainController {
     public void productImage(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam("code") String code) throws IOException {
         Product product = null;
         if (code != null) {
-            product = this.productDAO.findProduct(code);
+            product = this.productRepository.findProduct(code);
         }
         if (product != null && product.getImage() != null) {
-           response.setContentType("image/jpeg");
-           response.setContentType("image/png");
+            response.setContentType("image/jpeg");
+            response.setContentType("image/png");
             response.getOutputStream().write(product.getImage());
         }
         response.getOutputStream().close();

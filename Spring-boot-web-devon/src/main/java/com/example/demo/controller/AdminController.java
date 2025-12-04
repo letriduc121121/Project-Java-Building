@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.OrderDAO;
-import com.example.demo.dao.ProductDAO;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.form.ProductForm;
 import com.example.demo.model.OrderDetailInfo;
@@ -28,10 +28,10 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private OrderDAO orderDAO;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private ProductDAO productDAO;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductFormValidator productFormValidator;
@@ -80,19 +80,19 @@ public class AdminController {
         final int MAX_NAVIGATION_PAGE = 10;
 
         PaginationResult<OrderInfo> paginationResult //
-                = orderDAO.listOrderInfo(page, MAX_RESULT, MAX_NAVIGATION_PAGE);
+                = orderRepository.listOrderInfo(page, MAX_RESULT, MAX_NAVIGATION_PAGE);
 
         model.addAttribute("paginationResult", paginationResult);
         return "orderList";
     }
 
     // GET: Show product.
-    @RequestMapping(value = {"/admin/product"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/admin/product"})
     public String product(Model model, @RequestParam(value = "code", defaultValue = "") String code) {
         ProductForm productForm = null;
 
         if (code != null && code.length() > 0) {
-            Product product = productDAO.findProduct(code);
+            Product product = productRepository.findProduct(code);
             if (product != null) {
                 productForm = new ProductForm(product);
             }
@@ -116,7 +116,7 @@ public class AdminController {
             return "product";
         }
         try {
-            productDAO.save(productForm);
+            productRepository.save(productForm);
         } catch (Exception e) {
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             String message = rootCause.getMessage();
@@ -132,12 +132,12 @@ public class AdminController {
     public String orderView(Model model, @RequestParam("orderId") String orderId) {
         OrderInfo orderInfo = null;
         if (orderId != null) {
-            orderInfo = this.orderDAO.getOrderInfo(orderId);
+            orderInfo = this.orderRepository.getOrderInfo(orderId);
         }
         if (orderInfo == null) {
             return "redirect:/admin/orderList";
         }
-        List<OrderDetailInfo> details = this.orderDAO.listOrderDetailInfos(orderId);
+        List<OrderDetailInfo> details = this.orderRepository.listOrderDetailInfos(orderId);
         orderInfo.setDetails(details);
 
         model.addAttribute("orderInfo", orderInfo);

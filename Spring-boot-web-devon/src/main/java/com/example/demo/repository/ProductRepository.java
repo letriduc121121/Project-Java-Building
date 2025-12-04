@@ -1,42 +1,36 @@
-package com.example.demo.dao;
-
-import java.io.IOException;
-import java.util.Date;
-
-import jakarta.persistence.NoResultException;
-import org.hibernate.query.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+package com.example.demo.repository;
 
 import com.example.demo.entity.Product;
 import com.example.demo.form.ProductForm;
 import com.example.demo.model.ProductInfo;
 import com.example.demo.pagination.PaginationResult;
+import jakarta.persistence.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.Date;
 
 @Transactional
+@RequiredArgsConstructor
 @Repository
-public class ProductDAO {
- 
-    @Autowired
-    private SessionFactory sessionFactory;
- 
+public class ProductRepository {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public Product findProduct(String code) {
         try {
             String sql = "Select e from " + Product.class.getName() + " e Where e.code =:code ";
- 
-            Session session = this.sessionFactory.getCurrentSession();
-            Query<Product> query = session.createQuery(sql, Product.class);
+            Query query = entityManager.createQuery(sql, Product.class);
             query.setParameter("code", code);
             return (Product) query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
- 
+
     public ProductInfo findProductInfo(String code) {
         Product product = this.findProduct(code);
         if (product == null) {
@@ -44,15 +38,13 @@ public class ProductDAO {
         }
         return new ProductInfo(product.getCode(), product.getName(), product.getPrice());
     }
- 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+
+    @Transactional(rollbackFor = Exception.class)
     public void save(ProductForm productForm) {
- 
-        Session session = this.sessionFactory.getCurrentSession();
         String code = productForm.getCode();
- 
+
         Product product = null;
- 
+
         boolean isNew = false;
         if (code != null) {
             product = this.findProduct(code);
@@ -65,7 +57,7 @@ public class ProductDAO {
         product.setCode(code);
         product.setName(productForm.getName());
         product.setPrice(productForm.getPrice());
- 
+
         if (productForm.getFileData() != null) {
             byte[] image = null;
             try {
@@ -77,33 +69,54 @@ public class ProductDAO {
             }
         }
         if (isNew) {
-            session.persist(product);
+            entityManager.persist(product);
         }
         // If error in DB, Exceptions will be thrown out immediately
-        session.flush();
+        entityManager.flush();
     }
- 
-    public PaginationResult<ProductInfo> queryProducts(int page, int maxResult, int maxNavigationPage,
-            String likeName) {
-        String sql = "Select new " + ProductInfo.class.getName() //
-                + "(p.code, p.name, p.price) " + " from "//
+
+    @Transactional(readOnly = true)
+    public PaginationResult<ProductInfo> queryProducts(
+            int page, int maxResult, int maxNavigationPage, String likeName) {
+
+        // MAIN QUERY
+        String sql = "Select new " + ProductInfo.class.getName()
+                + "(p.code, p.name, p.price) from "
                 + Product.class.getName() + " p ";
-        if (likeName != null && likeName.length() > 0) {
-            sql += " Where lower(p.name) like :likeName ";
+
+        // COUNT QUERY
+        String countSql = "Select count(p) from "
+                + Product.class.getName() + " p ";
+
+        boolean hasLike = likeName != null && !likeName.isEmpty();
+
+        if (hasLike) {
+            sql += " where lower(p.name) like :likeName ";
+            countSql += " where lower(p.name) like :likeName ";
         }
+
         sql += " order by p.createDate desc ";
-        // 
-        Session session = this.sessionFactory.getCurrentSession();
-        Query<ProductInfo> query = session.createQuery(sql, ProductInfo.class);
- 
-        if (likeName != null && likeName.length() > 0) {
-            query.setParameter("likeName", "%" + likeName.toLowerCase() + "%");
+
+        // Tạo TypedQuery
+        TypedQuery<ProductInfo> query =
+                entityManager.createQuery(sql, ProductInfo.class);
+
+        // Tạo CountQuery
+        TypedQuery<Long> countQuery =
+                entityManager.createQuery(countSql, Long.class);
+        if (hasLike) {
+            String v = "%" + likeName.toLowerCase() + "%";
+            query.setParameter("likeName", v);
+            countQuery.setParameter("likeName", v);
         }
-        return new PaginationResult<ProductInfo>(query, page, maxResult, maxNavigationPage);
+
+        // Trả về phân trang
+        return new PaginationResult<>(query, countQuery, page, maxResult, maxNavigationPage);
     }
- 
+
+    @Transactional(readOnly = true)
     public PaginationResult<ProductInfo> queryProducts(int page, int maxResult, int maxNavigationPage) {
         return queryProducts(page, maxResult, maxNavigationPage, null);
     }
- 
+
 }

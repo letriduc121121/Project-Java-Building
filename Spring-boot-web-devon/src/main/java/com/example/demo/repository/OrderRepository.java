@@ -1,12 +1,13 @@
-package com.example.demo.dao;
+package com.example.demo.repository;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,18 +25,17 @@ import com.example.demo.pagination.PaginationResult;
 
 @Transactional
 @Repository
-public class OrderDAO {
+public class OrderRepository {
+ 
+    @PersistenceContext
+    private EntityManager entityManager;
  
     @Autowired
-    private SessionFactory sessionFactory;
- 
-    @Autowired
-    private ProductDAO productDAO;
+    private ProductRepository productRepository;
  
     private int getMaxOrderNum() {
         String sql = "Select max(o.orderNum) from " + Order.class.getName() + " o ";
-        Session session = this.sessionFactory.getCurrentSession();
-        Query<Integer> query = session.createQuery(sql, Integer.class);
+        Query query = entityManager.createQuery(sql, Integer.class);
         Integer value = (Integer) query.getSingleResult();
         if (value == null) {
             return 0;
@@ -45,7 +45,6 @@ public class OrderDAO {
  
     @Transactional(rollbackFor = Exception.class)
     public void saveOrder(CartInfo cartInfo) {
-        Session session = this.sessionFactory.getCurrentSession();
  
         int orderNum = this.getMaxOrderNum() + 1;
         Order order = new Order();
@@ -60,8 +59,8 @@ public class OrderDAO {
         order.setCustomerEmail(customerInfo.getEmail());
         order.setCustomerPhone(customerInfo.getPhone());
         order.setCustomerAddress(customerInfo.getAddress());
- 
-        session.persist(order);
+
+        entityManager.persist(order);
  
         List<CartLineInfo> lines = cartInfo.getCartLines();
  
@@ -74,34 +73,37 @@ public class OrderDAO {
             detail.setQuanity(line.getQuantity());
  
             String code = line.getProductInfo().getCode();
-            Product product = this.productDAO.findProduct(code);
+            Product product = this.productRepository.findProduct(code);
             detail.setProduct(product);
- 
-            session.persist(detail);
+
+            entityManager.persist(detail);
         }
  
         // Order Number!
         cartInfo.setOrderNum(orderNum);
         // Flush
-        session.flush();
+        entityManager.flush();
     }
  
     // @page = 1, 2, ...
     public PaginationResult<OrderInfo> listOrderInfo(int page, int maxResult, int maxNavigationPage) {
-        String sql = "Select new " + OrderInfo.class.getName()//
+
+        String sql = "SELECT NEW " + OrderInfo.class.getName()
                 + "(ord.id, ord.orderDate, ord.orderNum, ord.amount, "
-                + " ord.customerName, ord.customerAddress, ord.customerEmail, ord.customerPhone) " + " from "
-                + Order.class.getName() + " ord "//
-                + " order by ord.orderNum desc";
- 
-        Session session = this.sessionFactory.getCurrentSession();
-        Query<OrderInfo> query = session.createQuery(sql, OrderInfo.class);
-        return new PaginationResult<OrderInfo>(query, page, maxResult, maxNavigationPage);
+                + "ord.customerName, ord.customerAddress, ord.customerEmail, ord.customerPhone) "
+                + "FROM " + Order.class.getName() + " ord "
+                + "ORDER BY ord.orderNum DESC";
+
+        String countSql = "SELECT COUNT(ord.id) FROM " + Order.class.getName() + " ord";
+
+        TypedQuery<OrderInfo> query = entityManager.createQuery(sql, OrderInfo.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery(countSql, Long.class);
+
+        return new PaginationResult<>(query, countQuery, page, maxResult, maxNavigationPage);
     }
  
     public Order findOrder(String orderId) {
-        Session session = this.sessionFactory.getCurrentSession();
-        return session.find(Order.class, orderId);
+        return entityManager.find(Order.class, orderId);
     }
  
     public OrderInfo getOrderInfo(String orderId) {
@@ -119,9 +121,8 @@ public class OrderDAO {
                 + "(d.id, d.product.code, d.product.name , d.quanity,d.price,d.amount) "//
                 + " from " + OrderDetail.class.getName() + " d "//
                 + " where d.order.id = :orderId ";
- 
-        Session session = this.sessionFactory.getCurrentSession();
-        Query<OrderDetailInfo> query = session.createQuery(sql, OrderDetailInfo.class);
+
+        Query query = entityManager.createQuery(sql, OrderDetailInfo.class);
         query.setParameter("orderId", orderId);
  
         return query.getResultList();

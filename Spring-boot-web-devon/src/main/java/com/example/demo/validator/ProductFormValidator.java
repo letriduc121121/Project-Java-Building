@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.example.demo.dao.ProductDAO;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.entity.Product;
 import com.example.demo.form.ProductForm;
 
@@ -14,7 +14,7 @@ import com.example.demo.form.ProductForm;
 public class ProductFormValidator implements Validator {
  
    @Autowired
-   private ProductDAO productDAO;
+   private ProductRepository productRepository;
  
    // This validator only checks for the ProductForm.
    @Override
@@ -36,7 +36,7 @@ public class ProductFormValidator implements Validator {
          if (code.matches("\\s+")) {
             errors.rejectValue("code", "Pattern.productForm.code");
          } else if (productForm.isNewProduct()) {
-            Product product = productDAO.findProduct(code);
+            Product product = productRepository.findProduct(code);
             if (product != null) {
                errors.rejectValue("code", "Duplicate.productForm.code");
             }
