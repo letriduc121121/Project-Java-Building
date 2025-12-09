@@ -1,140 +1,141 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Shoe Shop Online</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
-    <th:block th:include="_header"></th:block>
+    <title>Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/register/vendor/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/register/css/small-business.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/register/register.css}"/>
 </head>
-<style type="text/css">
-    .spring-btn-black{
-        clear:both; background: #000; border: none; color: #fff; font-size: 1em; padding: 10px; cursor: pointer; font-size: 17px;
-    }
-
-    a:hover{
-        color: #fff;
-        font-weight: bold;
-    }
-    h1{
-        font-weight: bold;
-        margin-bottom: 2rem;
-    }
-    .container{
-        color: #000;
-    }
-    ul li {
-        list-style: none;
-        margin: 0.5rem;
-    }
-
-    #spring_col1{
-        color: #000;
-    }
-    #spring_col1 a{
-        color: #000;
-        text-decoration: underline;
-    }
-
-    #spring_col1 a:hover{
-        color: #fff;
-        background-color: #000;
-
-    }
-
-    html, body{
-        height: 100%;
-        font-family: 'Lato', sans-serif;
-        font-family: 'Open Sans', sans-serif;
-        font-family: 'Abel', sans-serif;
-    }
-</style>
 <body>
-
-<th:block th:include="_menu"></th:block>
-
 <div class="container">
-    <div class="row">
-        <div class="col-lg-6 col-sm-8 col-xs-12">
-            <section id="spring_col1">
-                <h1>LOG IN</h1>
-
-                <a href="">Forgot Your Password?</a>
-
-                <!-- /login?error=true -->
-                <div th:if="${param.error}" style="color: red; margin: 10px 0px;">
-                    Login Failed!!!<br /> Reason :
-                    <span th:text="${session['SPRING_SECURITY_LAST_EXCEPTION'] != null ? session['SPRING_SECURITY_LAST_EXCEPTION'].message : 'Bad credentials'}"></span>
+    <div class="row justify-content-center">
+        <div class="register-container">
+            <div class="register-card">
+                <!-- Header -->
+                <div class="register-header">
+                    <h2><img th:src="@{/img/login-user.png}" alt="login icon" class="header-icon">Login</h2>
+                    <p>Please enter your information</p>
                 </div>
 
-                <form method="POST" th:action="@{/j_spring_security_check}">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">Username</label>
-                        <input type="text" name="userName" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-
+                <div class="register-body">
+                    <!-- Access Denied -->
+                    <div class="alert alert-danger" th:if="${param.accessDenied}">
+                        <i class="fas fa-ban me-2"></i>
+                        You are not authorized
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1">Password</label>
-                        <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+
+                    <div th:if="${param.incorrectAccount}" class="alert alert-danger">
+                        <i class="fas fa-ban me-2"></i>
+                        Username or password incorrect
                     </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                    <!-- Session Timeout -->
+                    <div class="alert alert-danger" th:if="${param.sessionTimeout}">
+                        <i class="fas fa-clock me-2"></i>
+                        Session timeout
                     </div>
-                    <button type="submit" class="spring-btn-black">LOG IN <span class="fa fa-arrow-right" style="margin-left: 9px;"></span></button>
 
-                </form>
+                    <!-- Form -->
+                    <form id="loginForm" th:action="@{/j_spring_security_check}" method="post">
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label class="form-label" for="userName">
+                                <i class="fas fa-at me-1"></i>Username
+                            </label>
+                            <input type="text" name="userName" class="form-control" id="userName"
+                                   placeholder="Choose a username" required>
+                        </div>
 
-                <span class="error-message" th:utext="${error}"></span>
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label class="form-label" for="password">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <div class="password-field">
+                                <input type="password" id="password" name="password" class="form-control" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-dark w-100 mt-3" id="loginButton">
+                            LOG IN
+                        </button>
 
-                <br><br>
+                        <a class="btn btn-dark w-100 mt-3" th:href="@{/}">HOME<span
+                                class="sr-only">(current)</span>
+                        </a>
+                    </form>
 
-                By clicking 'Log In' you agree to our website <a href="">Creators Club Terms & Conditions </a>,  <a href="">Spring Privacy Notice</a> and  <a href="">Terms & Conditions</a>.
-
-                <!--  ----------- form end -------------- -->
-
-
-            </section>
-            <div style="text-align:left">
-                <h3>User/Password:</h3>
-                <ul>
-                    <li>employee1/123</li>
-                    <li>manager1/123</li>
-                </ul>
+                    <!-- Social Login -->
+                    <div class="social-login">
+                        <div class="social-title">Or login with</div>
+                        <div class="social-buttons">
+                            <a href="#" class="social-btn" title="Register with Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-btn" title="Register with Google">
+                                <i class="fab fa-google"></i>
+                            </a>
+                            <a href="#" class="social-btn" title="Register with Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="login-link">
+                        Don't have an account?
+                        <a th:href="@{/register}">Sign Up</a>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="col-lg-6 col-sm-4 col-xs-12">
-
-            <h1>JOIN THE CLUB. GET REWARDED.</h1>
-            Join the adidas Creators Club membership program:
-            <ul >
-                <li ><i class="fas fa-check"></i> Get immediate access to all Challenger level rewards</li>
-                <li><i class="fas fa-check"></i> Earn access to shop limited edition products</li>
-                <li ><i class="fas fa-check"></i> Level up for exclusive access to sport, yoga and music events</li>
-                <li ><i class="fas fa-check"></i> Receive our best special offers and promotions</li>
-
-            </ul>
-
-            Join now and start earning points to access new levels and rewards. It's time to unlock the best of adidas.
-            <br><br>
-            <a href=""  class="spring-btn-black" />JOIN THE CLUB <span class="fa fa-arrow-right" style="margin-left: 9px;"></span></a>
-
-            <br><br>
-
-            <img src="https://account-frontends.adidas.com/account_account-portal/1.0.0-experimental.14/assets/adiclub-blue-desktop.e34c412f9253e8d5.svg">
-
-
         </div>
     </div>
 </div>
-
-
 <!-- ------------------------------Login page end---------------------------------- -->
+<th:block th:replace="~{admin/common/common-scripts :: jquery}"></th:block>
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const toggle = field.nextElementSibling;
+        const icon = toggle.querySelector('i');
 
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
 
+    // Login form validation
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
 
+        if (username.length < 3) {
+            alert('Username must contain at least 3 characters!');
+            e.preventDefault();
+            return false;
+        }
 
-<th:block th:include="_footer"></th:block>
+        if (password.length < 3) {
+            alert('Password must contain at least 3 characters!');
+            e.preventDefault();
+            return false;
+        }
 
+        // Optional loading effect
+        const btn = document.getElementById('loginButton');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        btn.disabled = true;
+
+        return true; // allow submit
+    });
+</script>
 </body>
 </html>

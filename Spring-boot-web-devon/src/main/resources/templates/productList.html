@@ -44,10 +44,8 @@
 
                         <!-- For Manager edit Product -->
                         <th:block sec:authorize="hasAuthority('ROLE_MANAGER')">
-
                             <a style="color:red;"
                                th:href="@{|/admin/product?code=${prodInfo.code}|}">Edit Product</a>
-
                         </th:block>
                     </div>
                 </div>

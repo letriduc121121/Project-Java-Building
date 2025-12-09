@@ -2,7 +2,7 @@
      xmlns:th="http://www.thymeleaf.org"
      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
-    <nav class="navbar navbar-expand-lg navbar-light navbar-full" style="background-color: #fff;" id="nav-main">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-full" style="background-color:#FFFFFF" id="nav-main">
         <div class="logo">
             <a class="nav-link" th:href="@{/}">
                 <img src="https://bizweb.dktcdn.net/100/328/362/themes/894751/assets/logo.png?1676257083798"
@@ -25,7 +25,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/productList}">News</a>
+                    <a class="nav-link" th:href="@{/news}">News</a>
                 </li>
 
                 <li class="nav-item">
@@ -33,7 +33,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/productList}">Contact</a>
+                    <a class="nav-link" th:href="@{/contact}">Contact</a>
                 </li>
 
                 <th:block sec:authorize="hasAnyRole('ROLE_MANAGER','ROLE_EMPLOYEE')">
@@ -69,7 +69,7 @@
             <ul class="navbar-nav ml-auto">
                 <th:block sec:authorize="!isAuthenticated()">
                     <li class="nav-item">
-                        <a th:href="@{/admin/login}" class="nav-link">Login<span class="sr-only">(current)</span></a>
+                        <a th:href="@{/admin/login}" class="btn btn-dark">Login<span class="sr-only">(current)</span></a>
                     </li>
                 </th:block>
             </ul>
