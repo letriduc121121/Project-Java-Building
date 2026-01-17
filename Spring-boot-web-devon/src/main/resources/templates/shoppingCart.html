@@ -28,7 +28,7 @@
           <th:block th:if="${cartForm != null && cartForm.cartLines != null && !cartForm.cartLines.empty}">
          <form method="POST" th:object="${cartForm}" th:action="@{/shoppingCart}">
           
-               <div class="product-preview-container"
+               <div class="building-preview-container"
                         th:each="cartLineInfo, varStatus : ${cartForm.cartLines}">
             <tr>
               <td><img th:src="@{|/productImage?code=${cartLineInfo.productInfo.code}|}" width="190px"></td>

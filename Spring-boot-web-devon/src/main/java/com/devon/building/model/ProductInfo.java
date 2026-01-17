@@ -1,50 +1,39 @@
 package com.devon.building.model;
 
-import com.devon.building.entity.Product;
+import com.devon.building.entity.Building;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ProductInfo {
-    private String code;
+    private Long id;
     private String name;
     private double price;
- 
+    private String street;
+    private String ward;
+    private String district;
+
     public ProductInfo() {
     }
- 
-    public ProductInfo(Product product) {
-        this.code = product.getCode();
-        this.name = product.getName();
-        this.price = product.getPrice();
+
+    public ProductInfo(Building building) {
+        this.id = building.getId();
+        this.name = building.getName();
+        this.price = building.getPrice();
+        this.street = building.getStreet();
+        this.ward = building.getWard();
+        this.district = building.getDistrict();
     }
- 
+
     // Using in JPA/Hibernate query
-    public ProductInfo(String code, String name, double price) {
-        this.code = code;
+    public ProductInfo(Long id, String name, double price, String street, String ward, String district) {
+        this.id = id;
         this.name = name;
         this.price = price;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
     }
- 
-    public String getCode() {
-        return code;
-    }
- 
-    public void setCode(String code) {
-        this.code = code;
-    }
- 
-    public String getName() {
-        return name;
-    }
- 
-    public void setName(String name) {
-        this.name = name;
-    }
- 
-    public double getPrice() {
-        return price;
-    }
- 
-    public void setPrice(double price) {
-        this.price = price;
-    }
- 
+
 }

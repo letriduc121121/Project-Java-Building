@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import org.modelmapper.ModelMapper;
+
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer{
  
@@ -15,6 +17,11 @@ public class WebConfiguration implements WebMvcConfigurer{
         messageSource.setBasename("classpath:validation");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
   
 }

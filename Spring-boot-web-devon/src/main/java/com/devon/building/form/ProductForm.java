@@ -1,10 +1,14 @@
 package com.devon.building.form;
 
-import com.devon.building.entity.Product;
+import com.devon.building.entity.Building;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+@Getter
+@Setter
 public class ProductForm {
-    private String code;
+    private Long id;
     private String name;
     private double price;
  
@@ -17,50 +21,10 @@ public class ProductForm {
         this.newProduct= true;
     }
  
-    public ProductForm(Product product) {
-        this.code = product.getCode();
-        this.name = product.getName();
-        this.price = product.getPrice();
-    }
- 
-    public String getCode() {
-        return code;
-    }
- 
-    public void setCode(String code) {
-        this.code = code;
-    }
- 
-    public String getName() {
-        return name;
-    }
- 
-    public void setName(String name) {
-        this.name = name;
-    }
- 
-    public double getPrice() {
-        return price;
-    }
- 
-    public void setPrice(double price) {
-        this.price = price;
-    }
- 
-    public MultipartFile getFileData() {
-        return fileData;
-    }
- 
-    public void setFileData(MultipartFile fileData) {
-        this.fileData = fileData;
-    }
- 
-    public boolean isNewProduct() {
-        return newProduct;
-    }
- 
-    public void setNewProduct(boolean newProduct) {
-        this.newProduct = newProduct;
+    public ProductForm(Building building) {
+        this.id = building.getId();
+        this.name = building.getName();
+        this.price = building.getPrice();
     }
  
 }

@@ -1,15 +1,15 @@
 package com.devon.building.controller;
 
-import com.devon.building.entity.Product;
-import com.devon.building.pagination.PaginationResult;
-import com.devon.building.validator.CustomerFormValidator;
-import com.devon.building.repository.OrderRepository;
-import com.devon.building.repository.ProductRepository;
+import com.devon.building.entity.Building;
 import com.devon.building.form.CustomerForm;
 import com.devon.building.model.CartInfo;
 import com.devon.building.model.CustomerInfo;
 import com.devon.building.model.ProductInfo;
+import com.devon.building.pagination.PaginationResult;
+import com.devon.building.repository.OrderRepository;
+import com.devon.building.repository.ProductRepository;
 import com.devon.building.utils.Utils;
+import com.devon.building.validator.CustomerFormValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,11 +69,6 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/news")
-    public String news(Model model) {
-        model.addAttribute("customer", new CustomerForm());
-        return "admin/building/buildingEdit";
-    }
 
     @GetMapping("/register")
     public String register(Model model) {
@@ -81,7 +76,7 @@ public class MainController {
         return "register";
     }
 
-    // Product List
+    // Building List
     @RequestMapping({"/productList"})
     public String listProductHandler(Model model, //
                                      @RequestParam(value = "name", defaultValue = "") String likeName, @RequestParam(value = "page", defaultValue = "1") int page) {
@@ -97,18 +92,18 @@ public class MainController {
 
     @RequestMapping({"/buyProduct"})
     public String listProductHandler(HttpServletRequest request, Model model, //
-                                     @RequestParam(value = "code", defaultValue = "") String code) {
+                                     @RequestParam(value = "id", defaultValue = "") Long id) {
 
-        Product product = null;
-        if (code != null && code.length() > 0) {
-            product = productRepository.findProduct(code);
+        Building building = null;
+        if (id != null) {
+            building = productRepository.findProduct(id);
         }
-        if (product != null) {
+        if (building != null) {
 
             //
             CartInfo cartInfo = Utils.getCartInSession(request);
 
-            ProductInfo productInfo = new ProductInfo(product);
+            ProductInfo productInfo = new ProductInfo(building);
 
             cartInfo.addProduct(productInfo, 1);
         }
@@ -118,16 +113,16 @@ public class MainController {
 
     @RequestMapping({"/shoppingCartRemoveProduct"})
     public String removeProductHandler(HttpServletRequest request, Model model, //
-                                       @RequestParam(value = "code", defaultValue = "") String code) {
-        Product product = null;
-        if (code != null && code.length() > 0) {
-            product = productRepository.findProduct(code);
+                                       @RequestParam(value = "id", defaultValue = "") Long id) {
+        Building building = null;
+        if (id != null) {
+            building = productRepository.findProduct(id);
         }
-        if (product != null) {
+        if (building != null) {
 
             CartInfo cartInfo = Utils.getCartInSession(request);
 
-            ProductInfo productInfo = new ProductInfo(product);
+            ProductInfo productInfo = new ProductInfo(building);
 
             cartInfo.removeProduct(productInfo);
 
@@ -259,15 +254,15 @@ public class MainController {
     }
 
     @RequestMapping(value = {"/productImage"}, method = RequestMethod.GET)
-    public void productImage(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam("code") String code) throws IOException {
-        Product product = null;
-        if (code != null) {
-            product = this.productRepository.findProduct(code);
+    public void productImage(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam("id") Long id) throws IOException {
+        Building building = null;
+        if (id != null) {
+            building = this.productRepository.findProduct(id);
         }
-        if (product != null && product.getImage() != null) {
+        if (building != null && building.getImage() != null) {
             response.setContentType("image/jpeg");
             response.setContentType("image/png");
-            response.getOutputStream().write(product.getImage());
+            response.getOutputStream().write(building.getImage());
         }
         response.getOutputStream().close();
     }

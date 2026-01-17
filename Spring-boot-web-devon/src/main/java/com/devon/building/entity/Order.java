@@ -18,6 +18,7 @@ public class Order implements Serializable {
  
     @Id
     @Column(name = "ID", length = 50)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
  
     @Column(name = "Order_Date", nullable = false)

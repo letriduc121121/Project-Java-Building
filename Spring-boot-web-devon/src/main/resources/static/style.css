@@ -95,8 +95,8 @@ img {
 
 /* footer */
 #footer-main {
-    background: #000;
-    color: white;
+    background: #35bf76;
+    color: #1a1a1a;
     font-size: 0.8rem;
     padding: 2.5rem 0;
     font-family: 'Lato', sans-serif;
@@ -106,7 +106,7 @@ img {
     font-size: 14px;
     display: block;
     margin: 0.3rem;
-    color: grey;
+    color: #1a1a1a;
 }
 
 #footer-main a:hover {
@@ -184,7 +184,7 @@ img {
 }
 
 .btn-dark {
-    background-color: #000;
+    background-color: #35bf76;
     color: #fff;
 }
 
@@ -215,6 +215,10 @@ img {
 .main-content-inner {
     float: left;
     width: 100%
+}
+
+.main-content {
+    min-height: calc(100vh - 100px) !important;
 }
 
 .main-content:before, .main-content:after {

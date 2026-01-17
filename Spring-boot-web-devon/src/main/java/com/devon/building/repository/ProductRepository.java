@@ -1,9 +1,9 @@
 package com.devon.building.repository;
 
-import com.devon.building.entity.Product;
+import com.devon.building.entity.Building;
 import com.devon.building.form.ProductForm;
-import com.devon.building.pagination.PaginationResult;
 import com.devon.building.model.ProductInfo;
+import com.devon.building.pagination.PaginationResult;
 import jakarta.persistence.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,43 +20,43 @@ public class ProductRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Product findProduct(String code) {
+    public Building findProduct(Long id) {
         try {
-            String sql = "Select e from " + Product.class.getName() + " e Where e.code =:code ";
-            Query query = entityManager.createQuery(sql, Product.class);
-            query.setParameter("code", code);
-            return (Product) query.getSingleResult();
+            String sql = "Select e from " + Building.class.getName() + " e Where e.id =:id ";
+            Query query = entityManager.createQuery(sql, Building.class);
+            query.setParameter("id", id);
+            return (Building) query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
-    public ProductInfo findProductInfo(String code) {
-        Product product = this.findProduct(code);
-        if (product == null) {
+    public ProductInfo findProductInfo(Long id) {
+        Building building = this.findProduct(id);
+        if (building == null) {
             return null;
         }
-        return new ProductInfo(product.getCode(), product.getName(), product.getPrice());
+        return new ProductInfo(building.getId(), building.getName(), building.getPrice(), building.getStreet(), building.getWard(), building.getDistrict());
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void save(ProductForm productForm) {
-        String code = productForm.getCode();
+        Long id = productForm.getId();
 
-        Product product = null;
+        Building building = null;
 
         boolean isNew = false;
-        if (code != null) {
-            product = this.findProduct(code);
+        if (id != null) {
+            building = this.findProduct(id);
         }
-        if (product == null) {
+        if (building == null) {
             isNew = true;
-            product = new Product();
-            product.setCreateDate(new Date());
+            building = new Building();
+            building.setCreateDate(new Date());
         }
-        product.setCode(code);
-        product.setName(productForm.getName());
-        product.setPrice(productForm.getPrice());
+        building.setId(id);
+        building.setName(productForm.getName());
+        building.setPrice(productForm.getPrice());
 
         if (productForm.getFileData() != null) {
             byte[] image = null;
@@ -65,28 +65,24 @@ public class ProductRepository {
             } catch (IOException e) {
             }
             if (image != null && image.length > 0) {
-                product.setImage(image);
+                building.setImage(image);
             }
         }
         if (isNew) {
-            entityManager.persist(product);
+            entityManager.persist(building);
         }
         // If error in DB, Exceptions will be thrown out immediately
         entityManager.flush();
     }
 
     @Transactional(readOnly = true)
-    public PaginationResult<ProductInfo> queryProducts(
-            int page, int maxResult, int maxNavigationPage, String likeName) {
+    public PaginationResult<ProductInfo> queryProducts(int page, int maxResult, int maxNavigationPage, String likeName) {
 
         // MAIN QUERY
-        String sql = "Select new " + ProductInfo.class.getName()
-                + "(p.code, p.name, p.price) from "
-                + Product.class.getName() + " p ";
+        String sql = "Select new " + ProductInfo.class.getName() + "(p.id, p.name, p.price, p.street, p.ward, p.district) from " + Building.class.getName() + " p ";
 
         // COUNT QUERY
-        String countSql = "Select count(p) from "
-                + Product.class.getName() + " p ";
+        String countSql = "Select count(p) from " + Building.class.getName() + " p ";
 
         boolean hasLike = likeName != null && !likeName.isEmpty();
 
@@ -98,12 +94,10 @@ public class ProductRepository {
         sql += " order by p.createDate desc ";
 
         // Tạo TypedQuery
-        TypedQuery<ProductInfo> query =
-                entityManager.createQuery(sql, ProductInfo.class);
+        TypedQuery<ProductInfo> query = entityManager.createQuery(sql, ProductInfo.class);
 
         // Tạo CountQuery
-        TypedQuery<Long> countQuery =
-                entityManager.createQuery(countSql, Long.class);
+        TypedQuery<Long> countQuery = entityManager.createQuery(countSql, Long.class);
         if (hasLike) {
             String v = "%" + likeName.toLowerCase() + "%";
             query.setParameter("likeName", v);

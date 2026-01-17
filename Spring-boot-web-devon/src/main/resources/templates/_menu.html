@@ -2,7 +2,9 @@
      xmlns:th="http://www.thymeleaf.org"
      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
-    <nav class="navbar navbar-expand-lg navbar-light navbar-full" style="background-color:#FFFFFF" id="nav-main">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top"
+         style="background-color:#FFFFFF; z-index:1030"
+         id="nav-main">
         <div class="logo">
             <a class="nav-link" th:href="@{/}">
                 <img src="https://bizweb.dktcdn.net/100/328/362/themes/894751/assets/logo.png?1676257083798"
@@ -46,7 +48,7 @@
                 </th:block>
                 <th:block sec:authorize="hasRole('ROLE_MANAGER')">
                     <li class="nav-item">
-                        <a th:href="@{/admin/product}" class="nav-link">
+                        <a th:href="@{/admin/building}" class="nav-link">
                             Create Product
                         </a>
                     </li>
@@ -69,7 +71,8 @@
             <ul class="navbar-nav ml-auto">
                 <th:block sec:authorize="!isAuthenticated()">
                     <li class="nav-item">
-                        <a th:href="@{/admin/login}" class="btn btn-dark">Login<span class="sr-only">(current)</span></a>
+                        <a th:href="@{/admin/login}" class="btn btn-dark">Login<span
+                                class="sr-only">(current)</span></a>
                     </li>
                 </th:block>
             </ul>

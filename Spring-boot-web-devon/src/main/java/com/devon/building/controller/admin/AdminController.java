@@ -1,15 +1,15 @@
 package com.devon.building.controller.admin;
 
-import com.devon.building.entity.Product;
-import com.devon.building.pagination.PaginationResult;
-import com.devon.building.validator.ProductFormValidator;
-import com.devon.building.repository.OrderRepository;
-import com.devon.building.repository.ProductRepository;
+import com.devon.building.entity.Building;
 import com.devon.building.form.ProductForm;
 import com.devon.building.model.OrderDetailInfo;
 import com.devon.building.model.OrderInfo;
+import com.devon.building.pagination.PaginationResult;
+import com.devon.building.repository.OrderRepository;
+import com.devon.building.repository.ProductRepository;
+import com.devon.building.validator.ProductFormValidator;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -22,19 +22,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Controller
 @Transactional
+@AllArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductFormValidator productFormValidator;
+    private final ProductFormValidator productFormValidator;
+
+    private final Logger logger = Logger.getLogger(AdminController.class.getName());
 
     @InitBinder
     public void myInitBinder(WebDataBinder dataBinder) {
@@ -42,7 +43,7 @@ public class AdminController {
         if (target == null) {
             return;
         }
-        System.out.println("Target=" + target);
+        logger.warning("target is " + target);
 
         if (target.getClass() == ProductForm.class) {
             dataBinder.setValidator(productFormValidator);
@@ -50,13 +51,12 @@ public class AdminController {
     }
 
     // GET: Show Login Page
-    @RequestMapping(value = {"/admin/login"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/admin/login"})
     public String login(Model model) {
-
         return "login";
     }
 
-    @RequestMapping(value = {"/admin/accountInfo"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/admin/accountInfo"})
     public String accountInfo(Model model) {
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -68,7 +68,7 @@ public class AdminController {
         return "accountInfo";
     }
 
-    @RequestMapping(value = {"/admin/orderList"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/admin/orderList"})
     public String orderList(Model model, //
                             @RequestParam(value = "page", defaultValue = "1") String pageStr) {
         int page = 1;
@@ -87,14 +87,14 @@ public class AdminController {
     }
 
     // GET: Show product.
-    @GetMapping(value = {"/admin/product"})
-    public String product(Model model, @RequestParam(value = "code", defaultValue = "") String code) {
+    @GetMapping(value = {"/admin/building"})
+    public String product(Model model, @RequestParam(value = "id", defaultValue = "") Long id) {
         ProductForm productForm = null;
 
-        if (code != null && code.length() > 0) {
-            Product product = productRepository.findProduct(code);
-            if (product != null) {
-                productForm = new ProductForm(product);
+        if (id != null) {
+            Building building = productRepository.findProduct(id);
+            if (building != null) {
+                productForm = new ProductForm(building);
             }
         }
         if (productForm == null) {
@@ -106,7 +106,7 @@ public class AdminController {
     }
 
     // POST: Save product
-    @RequestMapping(value = {"/admin/product"}, method = RequestMethod.POST)
+    @PostMapping(value = {"/admin/building"})
     public String productSave(Model model, //
                               @ModelAttribute("productForm") @Validated ProductForm productForm, //
                               BindingResult result, //
@@ -128,7 +128,7 @@ public class AdminController {
         return "redirect:/productList";
     }
 
-    @RequestMapping(value = {"/admin/order"}, method = RequestMethod.GET)
+    @GetMapping(value = {"/admin/order"})
     public String orderView(Model model, @RequestParam("orderId") String orderId) {
         OrderInfo orderInfo = null;
         if (orderId != null) {

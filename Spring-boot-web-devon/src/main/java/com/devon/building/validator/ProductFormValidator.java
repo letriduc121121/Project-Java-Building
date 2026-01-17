@@ -1,5 +1,6 @@
 package com.devon.building.validator;
 
+import com.devon.building.entity.Building;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -7,7 +8,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.devon.building.repository.ProductRepository;
-import com.devon.building.entity.Product;
 import com.devon.building.form.ProductForm;
 
 @Component
@@ -31,13 +31,13 @@ public class ProductFormValidator implements Validator {
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "NotEmpty.productForm.name");
       ValidationUtils.rejectIfEmptyOrWhitespace(errors, "price", "NotEmpty.productForm.price");
  
-      String code = productForm.getCode();
-      if (code != null && code.length() > 0) {
-         if (code.matches("\\s+")) {
+      Long id = productForm.getId();
+      if (id != null) {
+         if (id.toString().matches("\\s+")) {
             errors.rejectValue("code", "Pattern.productForm.code");
          } else if (productForm.isNewProduct()) {
-            Product product = productRepository.findProduct(code);
-            if (product != null) {
+            Building building = productRepository.findProduct(id);
+            if (building != null) {
                errors.rejectValue("code", "Duplicate.productForm.code");
             }
          }

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Devon-Building</title>
+    <th:block th:replace="~{admin/common/header :: header}"></th:block>
+</head>
+
+<body class="no-skin" style="font-family: 'Abel', sans-serif">
+    <th:block th:replace="~{admin/common/menu :: menu}"></th:block>
+
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try {
+                ace.settings.check("main-container", "fixed");
+            } catch (e) {
+            }
+        </script>
+
+        <th:block th:replace="~{admin/common/sidebar :: sidebar}"></th:block>
+
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <script type="text/javascript">
+                        try {
+                            ace.settings.check("breadcrumbs", "fixed");
+                        } catch (e) {
+                        }
+                    </script>
+
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="ace-icon fa fa-home home-icon"></i>
+                            <a href="#">Home</a>
+                        </li>
+                        <li class="active">Dashboard</li>
+                    </ul>
+                    <!-- /.breadcrumb -->
+                </div>
+
+                <div class="page-content">
+                    <div class="page-header">
+                        <h1>
+                            Thông tin tòa nhà
+                            <small>
+                                <i class="ace-icon fa fa-angle-double-right"></i>
+                                overview &amp; stats
+                            </small>
+                        </h1>
+                    </div>
+                    <!-- /.page-header -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title"
+                                        th:text="${building != null && building.id != null} ? 'Chỉnh sửa tòa nhà' : 'Thêm tòa nhà mới'">
+                                        Thông tin tòa nhà
+                                    </h4>
+                                </div>
+
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <form class="form-horizontal" id="form-edit">
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="name">
+                                                    Tên tòa nhà
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập tên tòa nhà"
+                                                        class="form-control" name="name" id="name"
+                                                        th:value="${building != null ? building.name : ''}" />
+                                                    <span class="error-messsage" id="noName"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tên tòa nhà
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="districtId">
+                                                    Quận
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <select name="district" id="districtId" class="form-control">
+                                                        <option value="">Chọn Quận</option>
+                                                        <option th:each="district: ${districts}"
+                                                            th:value="${district.key}" th:text="${district.value}"
+                                                            th:selected="${building != null and building.district == district.key}">
+                                                        </option>
+                                                    </select>
+                                                    <span class="error-messsage" id="noDistrict"
+                                                        style="display: none; color: red">
+                                                        Vui lòng chọn Quận
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="ward">
+                                                    Phường
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập tên phường"
+                                                        class="form-control" name="ward" id="ward"
+                                                        th:value="${building != null ? building.ward : ''}" />
+                                                    <span class="error-messsage" id="noWard"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tên phường
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="street">
+                                                    Đường
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập tên đường" class="form-control"
+                                                        name="street" id="street"
+                                                        th:value="${building != null ? building.street : ''}" />
+                                                    <span class="error-messsage" id="noStreet"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tên đường
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="structure">
+                                                    Kết cấu
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="..." class="form-control"
+                                                        name="structure" id="structure"
+                                                        th:value="${building != null ? building.structure : ''}" />
+                                                    <span class="error-messsage" id="noStructure"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập kết cấu
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="numberOfBasement">
+                                                    Số tầng hầm
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập số tầng hầm"
+                                                        class="form-control" name="numberOfBasement"
+                                                        id="numberOfBasement"
+                                                        th:value="${building != null ? building.numberOfBasement : ''}" />
+                                                    <span class="error-messsage" id="noNumberOfBasement"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập số tầng hầm (>0)
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="floorArea">
+                                                    Diện tích sàn
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập diện tích sàn"
+                                                        class="form-control" name="floorArea" id="floorArea"
+                                                        th:value="${building != null ? building.floorArea : ''}" />
+                                                    <span class="error-messsage" id="noFloorArea"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập diện tích sàn (>0)
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="direction">
+                                                    Hướng
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập hướng tòa nhà"
+                                                        class="form-control" name="direction" id="direction"
+                                                        th:value="${building != null ? building.direction : ''}" />
+                                                    <span class="error-messsage" id="noDirection"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập hướng
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="level">
+                                                    Hạng
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập hạng tòa nhà"
+                                                        class="form-control" name="level" id="level"
+                                                        th:value="${building != null ? building.level : ''}" />
+                                                    <span class="error-messsage" id="noLevel"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập hạng
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="rentArea">
+                                                    Diện tích thuê
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập diện tích thuê"
+                                                        class="form-control" name="rentArea" id="rentArea"
+                                                        th:value="${building != null ? building.rentArea : ''}" />
+                                                    <span class="error-messsage" id="noRentArea"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập diện tích thuê
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="rentPrice">
+                                                    Giá thuê
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" step="1"
+                                                        placeholder="Nhập giá thuê (nguyên dương)" class="form-control"
+                                                        name="rentPrice" id="rentPrice"
+                                                        th:value="${building != null ? building.rentPrice : ''}" />
+                                                    <span class="error-messsage" id="noRentPrice"
+                                                        style="display: none; color: red">
+                                                        Giá thuê phải là số nguyên dương
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="rentPriceDescription">
+                                                    Mô tả giá
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Mô tả giá thuê" class="form-control"
+                                                        name="rentPriceDescription" id="rentPriceDescription"
+                                                        th:value="${building != null ? building.rentPriceDescription : ''}" />
+                                                    <span class="error-messsage" id="noRentPriceDescription"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập mô tả giá
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="serviceFee">
+                                                    Phí dịch vụ
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập phí dịch vụ"
+                                                        class="form-control" name="serviceFee" id="serviceFee"
+                                                        th:value="${building != null ? building.serviceFee : ''}" />
+                                                    <span class="error-messsage" id="noServiceFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập phí dịch vụ
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="carFee">
+                                                    Phí ô tô
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập phí ô tô"
+                                                        class="form-control" name="carFee" id="carFee"
+                                                        th:value="${building != null ? building.carFee : ''}" />
+                                                    <span class="error-messsage" id="noCarFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập phí ô tô
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="motoFee">
+                                                    Phí mô tô
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập phí mô tô"
+                                                        class="form-control" name="motoFee" id="motoFee"
+                                                        th:value="${building != null ? building.motoFee : ''}" />
+                                                    <span class="error-messsage" id="noMotoFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập phí mô tô
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="overtimeFee">
+                                                    Phí ngoài giờ
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập phí ngoài giờ"
+                                                        class="form-control" name="overtimeFee" id="overtimeFee"
+                                                        th:value="${building != null ? building.overtimeFee : ''}" />
+                                                    <span class="error-messsage" id="noOvertimeFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập phí ngoài giờ
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="electricityFee">
+                                                    Tiền điện
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập tiền điện"
+                                                        class="form-control" name="electricityFee" id="electricityFee"
+                                                        th:value="${building != null ? building.electricityFee : ''}" />
+                                                    <span class="error-messsage" id="noElectricityFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tiền điện
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="waterFee">
+                                                    Tiền nước
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập tiền nước"
+                                                        class="form-control" name="waterFee" id="waterFee"
+                                                        th:value="${building != null ? building.waterFee : ''}" />
+                                                    <span class="error-messsage" id="noWaterFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tiền nước
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="deposit">
+                                                    Đặt cọc
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập tiền đặt cọc"
+                                                        class="form-control" name="deposit" id="deposit"
+                                                        th:value="${building != null ? building.deposit : ''}" />
+                                                    <span class="error-messsage" id="noDeposit"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tiền cọc
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="payment">
+                                                    Thanh toán
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" placeholder="Nhập tiền thanh toán"
+                                                        class="form-control" name="payment" id="payment"
+                                                        th:value="${building != null ? building.payment : ''}" />
+                                                    <span class="error-messsage" id="noPayment"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập thanh toán
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Thời hạn thuê
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Thời hạn thuê" class="form-control"
+                                                        name="rentTime" id="rentTime"
+                                                        th:value="${building != null ? building.rentTime : ''}" />
+                                                    <span class="error-messsage" id="noRentTime"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập thời hạn thuê
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Thời gian trang trí
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="..." class="form-control"
+                                                        name="decorationTime" id="decorationTime"
+                                                        th:value="${building != null ? building.decorationTime : ''}" />
+                                                    <span class="error-messsage" id="noDecorationTime"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập thời gian trang trí
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="managerName">
+                                                    Tên quản lý
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập tên quản lý"
+                                                        class="form-control" name="managerName" id="managerName"
+                                                        th:value="${building != null ? building.managerName : ''}" />
+                                                    <span class="error-messsage" id="noManagerName"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập tên quản lý
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="managerPhone">
+                                                    SĐT quản lý
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Nhập sđt quản lý"
+                                                        class="form-control" name="managerPhone" id="managerPhone"
+                                                        th:value="${building != null ? building.managerPhone : ''}" />
+                                                    <span class="error-messsage" id="noManagerPhone"
+                                                        style="display: none; color: red">
+                                                        SĐT phải có đúng 10 số
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Loại nhà
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <label class="checkbox-inline" th:each="type:${typeCode}">
+                                                        <input type="checkbox" name="typeCode" th:value="${type.key}"
+                                                            th:checked="${building != null and building.typeCode != null and building.typeCode.contains(type.key)}" />
+                                                        <span th:text="${type.value}"> </span>
+                                                    </label>
+                                                    <div>
+                                                        <span class="error-messsage" id="noType"
+                                                            style="display: none; color: red">
+                                                            Vui lòng chọn loại tòa nhà
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Phí mô giới
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" step="1" placeholder="Nhập phí mô giới"
+                                                        class="form-control" name="brokerageFee" id="brokerageFee"
+                                                        th:value="${building != null ? building.brokerageFee : ''}" />
+                                                    <span class="error-messsage" id="noBrokerageFee"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập phí mô giới (>0)
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Ghi chú
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Ghi chú ..." class="form-control"
+                                                        name="note" id="note"
+                                                        th:value="${building != null ? building.note : ''}" />
+                                                    <span class="error-messsage" id="noNote"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập ghi chú
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Link tòa nhà
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Link ..." class="form-control"
+                                                        name="linkOfBuilding" id="linkOfBuilding"
+                                                        th:value="${building != null ? building.linkOfBuilding : ''}" />
+                                                    <span class="error-messsage" id="noLinkOfBuilding"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập link tòa nhà
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">
+                                                    Map
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" placeholder="Map ..." class="form-control"
+                                                        name="map" id="map"
+                                                        th:value="${building != null ? building.map : ''}" />
+                                                    <span class="error-messsage" id="noMap"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập map
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-actions center">
+                                                <a href="/admin/buildings/list">
+                                                    <button type="button" class="btn btn-sm btn-danger">
+                                                        <i class="ace-icon glyphicon glyphicon-remove"></i>
+                                                        Hủy thao tác
+                                                    </button>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-success" id="btnAddBuilding"
+                                                    th:text="${building != null && building.id != null} ? 'Cập nhật thông tin' : 'Thêm tòa nhà'"></button>
+                                            </div>
+                                            <input type="hidden" name="id" th:value="${building.id}" />
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- PAGE CONTENT END -->
+                            </div>
+                        </div>
+                        <!-- /.span -->
+                    </div>
+                </div>
+                <!-- /.page-content -->
+            </div>
+        </div>
+        <!-- /.main-content -->
+    </div>
+    <!-- /.main-container -->
+
+    <th:block th:replace="~{admin/common/footer :: footer}"></th:block>
+    <th:block th:replace="~{admin/common/common-scripts :: jquery}"></th:block>
+
+    <script>
+        //ấn các thông báo lỗi
+        function resetErrorMessage() {
+            const errorIds = [
+                "noName", "noStreet", "noWard", "noDistrict", "noStructure", "noNumberOfBasement", "noFloorArea",
+                "noDirection", "noLevel", "noRentArea", "noManagerName", "noManagerPhone", "noType",
+                "noRentPrice", "noRentPriceDescription", "noServiceFee", "noCarFee", "noMotoFee",
+                "noOvertimeFee", "noElectricityFee", "noWaterFee", "noDeposit", "noPayment",
+                "noRentTime", "noDecorationTime", "noBrokerageFee", "noNote", "noLinkOfBuilding", "noMap"
+            ];
+            errorIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = "none";
+            });
+        }
+
+        //ktra theo 4 nhóm
+        function validateData(json) {
+            resetErrorMessage(); // Reset all error messages
+            let check = true;
+
+            // ko đc để trống
+            const requiredFields = {
+                "name": "noName",
+                "street": "noStreet",
+                "ward": "noWard",
+                "district": "noDistrict",
+                "structure": "noStructure",
+                "direction": "noDirection",
+                "rentArea": "noRentArea",
+                "managerName": "noManagerName",
+                "level": "noLevel",
+                "rentPriceDescription": "noRentPriceDescription",
+                "serviceFee": "noServiceFee",
+                "carFee": "noCarFee",
+                "motoFee": "noMotoFee",
+                "overtimeFee": "noOvertimeFee",
+                "electricityFee": "noElectricityFee",
+                "waterFee": "noWaterFee",
+                "deposit": "noDeposit",
+                "payment": "noPayment",
+                "rentTime": "noRentTime",
+                "decorationTime": "noDecorationTime",
+                "note": "noNote",
+                "linkOfBuilding": "noLinkOfBuilding",
+                "map": "noMap"
+            };
+            for (let field in requiredFields) {
+                if (json[field] === "" || json[field] === undefined) {
+                    document.getElementById(requiredFields[field]).style.display = "block";
+                    check = false;
+                }
+            }
+            //kiểm tra số dương
+            const positiveFields = {
+                "numberOfBasement": "noNumberOfBasement",
+                "floorArea": "noFloorArea",
+                "brokerageFee": "noBrokerageFee"
+            };
+            for (let field in positiveFields) {
+                if (json[field] === "" || json[field] === undefined) {
+                    document.getElementById(positiveFields[field]).style.display = "block";
+                    check = false;
+                } else {
+                    if (Number(json[field]) < 0) {
+                        document.getElementById(positiveFields[field]).style.display = "block";
+                        check = false;
+                    }
+                }
+            }
+            // Kiểm tra loại tòa nhà
+            if (json["typeCode"].length === 0) {
+                document.getElementById("noType").style.display = "block";
+                check = false;
+            }
+            // Kiểm tra SĐT (chỉ validate nếu có nhập)
+            const phoneRegex = /^\d{10}$/;
+            if (json["managerPhone"] === "" || json["managerPhone"] === undefined) {
+                document.getElementById("noManagerPhone").style.display = "block";
+                document.getElementById("noManagerPhone").innerText = "Vui lòng nhập SĐT";
+                check = false;
+            } else if (!phoneRegex.test(json["managerPhone"])) {
+                document.getElementById("noManagerPhone").style.display = "block";
+                document.getElementById("noManagerPhone").innerText = "SĐT phải có đúng 10 số";
+                check = false;
+            }
+            // Kiểm tra Giá thuê (nguyên dương >0 )
+            if (json["rentPrice"] === "" || json["rentPrice"] === undefined) {
+                document.getElementById("noRentPrice").style.display = "block";
+                document.getElementById("noRentPrice").innerText = "Vui lòng nhập giá thuê";
+                check = false;
+            } else {
+                const rentPrice = Number(json["rentPrice"]);
+                if (!Number.isInteger(rentPrice) || rentPrice < 0) {
+                    document.getElementById("noRentPrice").style.display = "block";
+                    document.getElementById("noRentPrice").innerText = "Giá thuê phải là số nguyên dương";
+                    check = false;
+                }
+            }
+            return check;
+        }
+
+
+        $("#btnAddBuilding").click(function (e) {
+            e.preventDefault();
+            const json = {};
+            const typeCodes = [];
+            const formArray = $("#form-edit").serializeArray();
+            $.each(formArray, function (i, item) {
+                // Convert array objects to json
+                if (item.name === "typeCode") {
+                    typeCodes.push(item.value);
+                } else {
+                    json[item.name] = item.value;
+                }
+            });
+
+            json["typeCode"] = typeCodes;
+            // Validate dữ liệu
+            if (!validateData(json)) {
+                return;
+            }
+
+            console.log("Dữ liệu gửi lên:", JSON.stringify(json));
+
+            // Kiểm tra thêm mới hay cập nhật
+            if (json["id"] && json["id"] !== "") {
+                // Update building
+                updateBuilding(json);
+            } else {
+                // Add new building
+                addBuilding(json);
+            }
+        });
+
+        // Send data to server by AJAX
+        function addBuilding(json) {
+            $.ajax({
+                url: "/admin/api/buildings",
+                type: "POST",
+                data: JSON.stringify(json),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (response) {
+                    alert(response.message);
+                    console.log(response);
+                    window.location.href = "/admin/buildings/list";
+                },
+                error: function (err) {
+                    console.log("Error:", err);
+                    // Hiển thị lỗi từ backend
+                    if (err.responseJSON && err.responseJSON.detail) {
+                        // Nếu có mảng lỗi chi tiết
+                        alert("Lỗi:\n" + err.responseJSON.detail.join("\n"));
+                    } else if (err.responseJSON && err.responseJSON.message) {
+                        // Nếu chỉ có message
+                        alert(err.responseJSON.message);
+                    } else {
+                        alert("Có lỗi xảy ra khi thêm tòa nhà!");
+                    }
+                },
+            });
+        }
+
+        function updateBuilding(json) {
+            $.ajax({
+                url: "/admin/api/buildings",
+                type: "PUT",
+                data: JSON.stringify(json),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (response) {
+                    alert(response.message);
+                    console.log(response);
+                    window.location.href = "/admin/buildings/list";
+                },
+                error: function (err) {
+                    console.log("Error:", err);
+                    if (err.responseJSON && err.responseJSON.detail) {
+                        alert("Lỗi:\n" + err.responseJSON.detail.join("\n"));
+                    } else if (err.responseJSON && err.responseJSON.message) {
+                        alert(err.responseJSON.message);
+                    } else {
+                        alert("Có lỗi xảy ra khi cập nhật tòa nhà!");
+                    }
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>

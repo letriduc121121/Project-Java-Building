@@ -42,10 +42,10 @@
          <input type="submit" value="Send" class="button-send-sc" />
       </form>
       <div class="container">
-         <div class="product-preview-container" th:each="cartLineInfo : ${myCart.cartLines}">
+         <div class="building-preview-container" th:each="cartLineInfo : ${myCart.cartLines}">
             <ul>
                <li>
-                  <img class="product-image"
+                  <img class="building-image"
                      src="@{|/productImage?code=${cartLineInfo.productInfo.code}|}" />
                </li>
                <li>

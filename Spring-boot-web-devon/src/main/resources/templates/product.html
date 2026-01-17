@@ -25,7 +25,7 @@
       		<div class="col-lg-6 offset-3">
       		
       
-      <form th:object="${productForm}" th:action="@{/admin/product}"
+      <form th:object="${productForm}" th:action="@{/admin/building}"
               method="POST" enctype="multipart/form-data">
               
               <div class="page-title">Product</div>
@@ -33,15 +33,15 @@
       </div>
       
   <div class="form-group">
-    <label for="exampleInputEmail1">Code</label>
+    <label for="exampleInputEmail1">id</label>
     <input th:field="*{newProduct}" type="hidden" />
                   <input th:if="${productForm.newProduct}" type="text"
-                     th:field="*{code}" class="form-control"/>  
+                     th:field="*{id}" class="form-control"/>
                   <th:block th:if="${!productForm.newProduct}">   
-                       <span th:utext="${productForm.code}"></span>   
-                       <input type="hidden" th:field="*{code}"  />                                       
+                       <span th:utext="${productForm.id}"></span>
+                       <input type="hidden" th:field="*{id}"  />
                   </th:block> 
-    <span class="error-message" th:if="${#fields.hasErrors('code')}" th:errors="*{code}">..</span>  
+    <span class="error-message" th:if="${#fields.hasErrors('id')}" th:errors="*{id}">..</span>
     
   </div>
  
@@ -60,7 +60,7 @@
   
   <div class="form-group">
     <label for="exampleInputPassword1">Image</label>
-    <img th:src="@{|/productImage?code=${productForm.code}|}" width="100"/>
+    <img th:src="@{|/productImage?id=${productForm.id}|}" width="100"/>
   </div>
   
   <div class="form-group">
