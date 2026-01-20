@@ -1,6 +1,6 @@
 package com.devon.building.form;
 
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +21,10 @@ public class ProductForm {
         this.newProduct= true;
     }
  
-    public ProductForm(Building building) {
+    public ProductForm(BuildingEntity building) {
         this.id = building.getId();
         this.name = building.getName();
-        this.price = building.getPrice();
+        this.price = building.getRentPrice();
     }
  
 }

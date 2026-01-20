@@ -26,7 +26,7 @@ public class OrderDetail implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID", nullable = false, //
             foreignKey = @ForeignKey(name = "ORDER_DETAIL_PROD_FK"))
-    private Building building;
+    private BuildingEntity building;
 
     @Column(name = "Quanity", nullable = false)
     private int quanity;

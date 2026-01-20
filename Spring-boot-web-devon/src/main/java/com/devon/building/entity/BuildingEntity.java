@@ -1,17 +1,14 @@
 package com.devon.building.entity;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "building")
@@ -99,8 +96,9 @@ public class BuildingEntity {
     @Column(name = "map")
     private String map;
 
-    @Column(name = "image")
-    private String image;
+    @Lob
+    @Column(name = "image", length = Integer.MAX_VALUE, nullable = true)
+    private byte[] image;
 
     @Column(name = "createddate")
     private Date createdDate;

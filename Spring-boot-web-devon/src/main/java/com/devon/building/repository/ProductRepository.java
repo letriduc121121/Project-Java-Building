@@ -1,6 +1,6 @@
 package com.devon.building.repository;
 
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import com.devon.building.form.ProductForm;
 import com.devon.building.model.ProductInfo;
 import com.devon.building.pagination.PaginationResult;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Date;
 
 @Transactional
 @RequiredArgsConstructor
@@ -20,30 +19,30 @@ public class ProductRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Building findProduct(Long id) {
+    public BuildingEntity findProduct(Long id) {
         try {
-            String sql = "Select e from " + Building.class.getName() + " e Where e.id =:id ";
-            Query query = entityManager.createQuery(sql, Building.class);
+            String sql = "Select e from " + BuildingEntity.class.getName() + " e Where e.id =:id ";
+            Query query = entityManager.createQuery(sql, BuildingEntity.class);
             query.setParameter("id", id);
-            return (Building) query.getSingleResult();
+            return (BuildingEntity) query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     public ProductInfo findProductInfo(Long id) {
-        Building building = this.findProduct(id);
+        BuildingEntity building = this.findProduct(id);
         if (building == null) {
             return null;
         }
-        return new ProductInfo(building.getId(), building.getName(), building.getPrice(), building.getStreet(), building.getWard(), building.getDistrict());
+        return new ProductInfo(building.getId(), building.getName(), building.getRentPrice(), building.getStreet(), building.getWard(), building.getDistrict());
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void save(ProductForm productForm) {
         Long id = productForm.getId();
 
-        Building building = null;
+        BuildingEntity building = null;
 
         boolean isNew = false;
         if (id != null) {
@@ -51,12 +50,12 @@ public class ProductRepository {
         }
         if (building == null) {
             isNew = true;
-            building = new Building();
-            building.setCreateDate(new Date());
+            building = new BuildingEntity();
+            // BuildingEntity không có setCreateDate(), bỏ qua
         }
         building.setId(id);
         building.setName(productForm.getName());
-        building.setPrice(productForm.getPrice());
+        building.setRentPrice((long) productForm.getPrice()); // BuildingEntity dùng rentPrice (Long)
 
         if (productForm.getFileData() != null) {
             byte[] image = null;
@@ -79,10 +78,10 @@ public class ProductRepository {
     public PaginationResult<ProductInfo> queryProducts(int page, int maxResult, int maxNavigationPage, String likeName) {
 
         // MAIN QUERY
-        String sql = "Select new " + ProductInfo.class.getName() + "(p.id, p.name, p.price, p.street, p.ward, p.district) from " + Building.class.getName() + " p ";
+        String sql = "Select new " + ProductInfo.class.getName() + "(p.id, p.name, p.price, p.street, p.ward, p.district) from " + BuildingEntity.class.getName() + " p ";
 
         // COUNT QUERY
-        String countSql = "Select count(p) from " + Building.class.getName() + " p ";
+        String countSql = "Select count(p) from " + BuildingEntity.class.getName() + " p ";
 
         boolean hasLike = likeName != null && !likeName.isEmpty();
 

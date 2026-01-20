@@ -1,6 +1,6 @@
 package com.devon.building.model;
 
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,10 +17,10 @@ public class ProductInfo {
     public ProductInfo() {
     }
 
-    public ProductInfo(Building building) {
+    public ProductInfo(BuildingEntity building) {
         this.id = building.getId();
         this.name = building.getName();
-        this.price = building.getPrice();
+        this.price = building.getRentPrice();
         this.street = building.getStreet();
         this.ward = building.getWard();
         this.district = building.getDistrict();
