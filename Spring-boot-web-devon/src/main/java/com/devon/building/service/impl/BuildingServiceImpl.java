@@ -119,11 +119,8 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     @Transactional
     public BuildingEntity update(BuildingDTO buildingDTO) {
+        // toBuildingEntity đã tự động tìm entity cũ và map DTO vào
         BuildingEntity buildingEntity = buildingConvertor.toBuildingEntity(buildingDTO);
-
-        if (buildingDTO.getId() != null) {
-            buildingEntity.setId(buildingDTO.getId());
-        }
 
         BuildingEntity storedBuilding = entityManager.merge(buildingEntity);
 

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.devon.building.entity.BuildingEntity;
 import com.devon.building.entity.RentAreaEntity;
+import com.devon.building.enums.District;
 import com.devon.building.exception.InvalidBuildingException;
 import com.devon.building.model.request.BuildingSearchRequest;
 import com.devon.building.model.response.BuildingSearchResponse;
@@ -44,8 +45,8 @@ public class BuildingConvertor {
         BuildingSearchResponse dto = modelMapper.map(entity, BuildingSearchResponse.class);
 
         // 3. địa chỉ
-        String districtName = com.devon.building.enums.District.getDistrict().getOrDefault(entity.getDistrict(), "");
-        dto.setAddress(entity.getStreet() + ", " + entity.getWard() + ", " + districtName);
+        dto.setAddress(entity.getStreet() + ", " + entity.getWard() + ", " +
+                District.getDistrict().getOrDefault(entity.getDistrict(), ""));
 
         // 4. diện tích
         List<RentAreaEntity> rentAreaEntities = entity.getRentAreaEntities();
@@ -58,26 +59,19 @@ public class BuildingConvertor {
     }
 
     public BuildingEntity toBuildingEntity(BuildingDTO buildingDTO) {
-        // Skip specific fields for creation/update
-        if (modelMapper.getTypeMap(BuildingDTO.class, BuildingEntity.class) == null) {
-            modelMapper.typeMap(BuildingDTO.class, BuildingEntity.class)
-                    .addMappings(mapper -> {
-                        mapper.skip(BuildingEntity::setId);
-                        mapper.skip(BuildingEntity::setCreatedDate);
-                        mapper.skip(BuildingEntity::setModifiedDate);
-                        mapper.skip(BuildingEntity::setCreatedBy);
-                        mapper.skip(BuildingEntity::setModifiedBy);
-                        mapper.skip(BuildingEntity::setImage);
-                    });
+        BuildingEntity buildingEntity;
+        if (buildingDTO.getId() != null) {
+            buildingEntity = entityManager.find(BuildingEntity.class, buildingDTO.getId());
+            if (buildingEntity == null) {
+                throw new InvalidBuildingException("Building not found with ID: " + buildingDTO.getId());
+            }
+        } else {
+            buildingEntity = new BuildingEntity();
         }
-
-        BuildingEntity buildingEntity = modelMapper.map(buildingDTO, BuildingEntity.class);
-
-        // Manual Map Type Code (List<String> to String)
+        modelMapper.map(buildingDTO, buildingEntity);
         if (buildingDTO.getTypeCode() != null && !buildingDTO.getTypeCode().isEmpty()) {
             buildingEntity.setType(String.join(",", buildingDTO.getTypeCode()));
         }
-
         return buildingEntity;
     }
 }
