@@ -30,6 +30,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         buildWhere(buildingSearchBuilder, where);
         sql.append(where);
         sql.append(" GROUP BY b.id");
+        sql.append(" ORDER BY b.name ASC"); // Sắp xếp theo tên tăng dần (A → Z)
 
         Query query = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
 

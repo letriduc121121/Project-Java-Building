@@ -12,11 +12,9 @@ import com.devon.building.model.dto.AssignBuildingDTO;
 import com.devon.building.model.dto.BuildingDTO;
 import com.devon.building.model.dto.ResponseDTO;
 import com.devon.building.model.dto.StaffResponseDTO;
+import com.devon.building.model.request.BuildingSearchRequest;
 import com.devon.building.model.response.BuildingSearchResponse;
-import com.devon.building.repository.AssignmentBuildingRepository;
-import com.devon.building.repository.BuildingRepository;
-import com.devon.building.repository.RentAreaRepository;
-import com.devon.building.repository.UserRepository;
+import com.devon.building.repository.*;
 import com.devon.building.service.BuildingService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -26,7 +24,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +48,9 @@ public class BuildingServiceImpl implements BuildingService {
     private AssignmentBuildingRepository assignmentBuildingRepository;
 
     @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
     private BuildingConvertor buildingConvertor;
 
     @Autowired
@@ -57,9 +61,9 @@ public class BuildingServiceImpl implements BuildingService {
 
 
     @Override
-    public List<BuildingSearchResponse> searchBuildings(Map<String, String> requestParams, List<String> typeCode) {
+    public List<BuildingSearchResponse> searchBuildings(BuildingSearchRequest request) {
 
-        BuildingSearchBuilder buildingSearchBuilder = buildingSearchBuilderConvertor.toBuildingSearchBuilder(requestParams, typeCode);
+        BuildingSearchBuilder buildingSearchBuilder = buildingSearchBuilderConvertor.toBuildingSearchBuilder(request);
 
         List<BuildingEntity> buildingEntities = buildingRepository.searchBuildings(buildingSearchBuilder);
 
@@ -78,9 +82,6 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingEntity create(BuildingDTO buildingDTO) {
         BuildingEntity buildingEntity = buildingConvertor.toBuildingEntity(buildingDTO);
         entityManager.persist(buildingEntity);
-        entityManager.flush();
-        Query q = entityManager.createNativeQuery("SELECT b.* FROM building b", BuildingEntity.class);
-        int count = q.getResultList().size();
 
         List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
         if (buildingDTO.getRentArea() != null && !buildingDTO.getRentArea().isEmpty()) {
@@ -101,7 +102,17 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     @Transactional
     public void delete(List<Long> ids) {
+        // Xóa theo thứ tự: OrderDetail -> AssignmentBuilding -> RentArea -> Building
+        // để tránh foreign key constraint violation
+        orderDetailRepository.deleteAllByBuilding_IdIn(ids);
+
+        // Xóa assignment của building
+        assignmentBuildingRepository.deleteAllByBuildingIdIn(ids);
+
+        // Xóa rent area
         rentAreaRepository.deleteAllByBuilding_IdIn(ids);
+
+        // Cuối cùng mới xóa building
         buildingRepository.deleteByIdIn(ids);
     }
 
@@ -181,26 +192,6 @@ public class BuildingServiceImpl implements BuildingService {
         responseDTO.setData(staffResponseDTOS);
         responseDTO.setMessage("Load staffs Successfully");
         return responseDTO;
-//        //dữ liệu mẫu
-//        StaffResponseDTO staff1 = new StaffResponseDTO();
-//        StaffResponseDTO staff2 = new StaffResponseDTO();
-//        StaffResponseDTO staff3 = new StaffResponseDTO();
-//        staff1.setId(22L);
-//        staff1.setUsername("Devonstaff1");
-//        staff1.setChecked("checked");
-//
-//        staff2.setId(33L);
-//        staff2.setUsername("Devonstaff2");
-//        staff2.setChecked("");
-//
-//        staff3.setId(44L);
-//        staff3.setUsername("aNDYNGO");
-//        staff3.setChecked("");
-//        staffResponseDTOS.add(staff1);
-//        staffResponseDTOS.add(staff2);
-//        staffResponseDTOS.add(staff3);
-
-
     }
 
     @Override
