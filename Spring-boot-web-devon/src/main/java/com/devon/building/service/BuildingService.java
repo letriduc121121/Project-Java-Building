@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface BuildingService {
-    List<BuildingSearchResponse> searchBuildings(Map<String, String> requestParams, List<String> typeCode);
+    List<BuildingSearchResponse> searchBuildings(BuildingSearchRequest request);
 
     void delete(List<Long > ids);
     

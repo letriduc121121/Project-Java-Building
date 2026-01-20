@@ -70,9 +70,10 @@
                                                     Tên tòa nhà
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập tên tòa nhà"
-                                                        class="form-control" name="name" id="name"
-                                                        th:value="${building != null ? building.name : ''}" />
+                                                    <input class="form-control" id="name" name="name"
+                                                        placeholder="Nhập tên tòa nhà"
+                                                        th:value="${building != null ? building.name : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noName"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tên tòa nhà
@@ -85,11 +86,11 @@
                                                     Quận
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <select name="district" id="districtId" class="form-control">
+                                                    <select class="form-control" id="districtId" name="district">
                                                         <option value="">Chọn Quận</option>
                                                         <option th:each="district: ${districts}"
-                                                            th:value="${district.key}" th:text="${district.value}"
-                                                            th:selected="${building != null and building.district == district.key}">
+                                                            th:selected="${building != null and building.district == district.key}"
+                                                            th:text="${district.value}" th:value="${district.key}">
                                                         </option>
                                                     </select>
                                                     <span class="error-messsage" id="noDistrict"
@@ -104,9 +105,10 @@
                                                     Phường
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập tên phường"
-                                                        class="form-control" name="ward" id="ward"
-                                                        th:value="${building != null ? building.ward : ''}" />
+                                                    <input class="form-control" id="ward" name="ward"
+                                                        placeholder="Nhập tên phường"
+                                                        th:value="${building != null ? building.ward : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noWard"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tên phường
@@ -119,9 +121,10 @@
                                                     Đường
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập tên đường" class="form-control"
-                                                        name="street" id="street"
-                                                        th:value="${building != null ? building.street : ''}" />
+                                                    <input class="form-control" id="street" name="street"
+                                                        placeholder="Nhập tên đường"
+                                                        th:value="${building != null ? building.street : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noStreet"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tên đường
@@ -134,9 +137,10 @@
                                                     Kết cấu
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="..." class="form-control"
-                                                        name="structure" id="structure"
-                                                        th:value="${building != null ? building.structure : ''}" />
+                                                    <input class="form-control" id="structure" name="structure"
+                                                        placeholder="..."
+                                                        th:value="${building != null ? building.structure : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noStructure"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập kết cấu
@@ -150,10 +154,10 @@
                                                     Số tầng hầm
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập số tầng hầm"
-                                                        class="form-control" name="numberOfBasement"
-                                                        id="numberOfBasement"
-                                                        th:value="${building != null ? building.numberOfBasement : ''}" />
+                                                    <input class="form-control" id="numberOfBasement"
+                                                        name="numberOfBasement" placeholder="Nhập số tầng hầm"
+                                                        th:value="${building != null ? building.numberOfBasement : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noNumberOfBasement"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập số tầng hầm (>0)
@@ -166,9 +170,10 @@
                                                     Diện tích sàn
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập diện tích sàn"
-                                                        class="form-control" name="floorArea" id="floorArea"
-                                                        th:value="${building != null ? building.floorArea : ''}" />
+                                                    <input class="form-control" id="floorArea" name="floorArea"
+                                                        placeholder="Nhập diện tích sàn"
+                                                        th:value="${building != null ? building.floorArea : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noFloorArea"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập diện tích sàn (>0)
@@ -181,9 +186,10 @@
                                                     Hướng
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập hướng tòa nhà"
-                                                        class="form-control" name="direction" id="direction"
-                                                        th:value="${building != null ? building.direction : ''}" />
+                                                    <input class="form-control" id="direction" name="direction"
+                                                        placeholder="Nhập hướng tòa nhà"
+                                                        th:value="${building != null ? building.direction : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noDirection"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập hướng
@@ -196,9 +202,10 @@
                                                     Hạng
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập hạng tòa nhà"
-                                                        class="form-control" name="level" id="level"
-                                                        th:value="${building != null ? building.level : ''}" />
+                                                    <input class="form-control" id="level" name="level"
+                                                        placeholder="Nhập hạng tòa nhà"
+                                                        th:value="${building != null ? building.level : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noLevel"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập hạng
@@ -211,9 +218,10 @@
                                                     Diện tích thuê
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập diện tích thuê"
-                                                        class="form-control" name="rentArea" id="rentArea"
-                                                        th:value="${building != null ? building.rentArea : ''}" />
+                                                    <input class="form-control" id="rentArea" name="rentArea"
+                                                        placeholder="Nhập diện tích thuê"
+                                                        th:value="${building != null ? building.rentArea : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noRentArea"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập diện tích thuê
@@ -225,10 +233,10 @@
                                                     Giá thuê
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" step="1"
-                                                        placeholder="Nhập giá thuê (nguyên dương)" class="form-control"
-                                                        name="rentPrice" id="rentPrice"
-                                                        th:value="${building != null ? building.rentPrice : ''}" />
+                                                    <input class="form-control" id="rentPrice" name="rentPrice"
+                                                        placeholder="Nhập giá thuê (nguyên dương)" step="1"
+                                                        th:value="${building != null ? building.rentPrice : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noRentPrice"
                                                         style="display: none; color: red">
                                                         Giá thuê phải là số nguyên dương
@@ -242,9 +250,10 @@
                                                     Mô tả giá
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Mô tả giá thuê" class="form-control"
-                                                        name="rentPriceDescription" id="rentPriceDescription"
-                                                        th:value="${building != null ? building.rentPriceDescription : ''}" />
+                                                    <input class="form-control" id="rentPriceDescription"
+                                                        name="rentPriceDescription" placeholder="Mô tả giá thuê"
+                                                        th:value="${building != null ? building.rentPriceDescription : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noRentPriceDescription"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập mô tả giá
@@ -257,9 +266,10 @@
                                                     Phí dịch vụ
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập phí dịch vụ"
-                                                        class="form-control" name="serviceFee" id="serviceFee"
-                                                        th:value="${building != null ? building.serviceFee : ''}" />
+                                                    <input class="form-control" id="serviceFee" name="serviceFee"
+                                                        placeholder="Nhập phí dịch vụ"
+                                                        th:value="${building != null ? building.serviceFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noServiceFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập phí dịch vụ
@@ -272,9 +282,10 @@
                                                     Phí ô tô
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập phí ô tô"
-                                                        class="form-control" name="carFee" id="carFee"
-                                                        th:value="${building != null ? building.carFee : ''}" />
+                                                    <input class="form-control" id="carFee" name="carFee"
+                                                        placeholder="Nhập phí ô tô"
+                                                        th:value="${building != null ? building.carFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noCarFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập phí ô tô
@@ -287,9 +298,10 @@
                                                     Phí mô tô
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập phí mô tô"
-                                                        class="form-control" name="motoFee" id="motoFee"
-                                                        th:value="${building != null ? building.motoFee : ''}" />
+                                                    <input class="form-control" id="motoFee" name="motoFee"
+                                                        placeholder="Nhập phí mô tô"
+                                                        th:value="${building != null ? building.motoFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noMotoFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập phí mô tô
@@ -303,9 +315,10 @@
                                                     Phí ngoài giờ
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập phí ngoài giờ"
-                                                        class="form-control" name="overtimeFee" id="overtimeFee"
-                                                        th:value="${building != null ? building.overtimeFee : ''}" />
+                                                    <input class="form-control" id="overtimeFee" name="overtimeFee"
+                                                        placeholder="Nhập phí ngoài giờ"
+                                                        th:value="${building != null ? building.overtimeFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noOvertimeFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập phí ngoài giờ
@@ -319,9 +332,10 @@
                                                     Tiền điện
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập tiền điện"
-                                                        class="form-control" name="electricityFee" id="electricityFee"
-                                                        th:value="${building != null ? building.electricityFee : ''}" />
+                                                    <input class="form-control" id="electricityFee"
+                                                        name="electricityFee" placeholder="Nhập tiền điện"
+                                                        th:value="${building != null ? building.electricityFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noElectricityFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tiền điện
@@ -334,9 +348,10 @@
                                                     Tiền nước
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập tiền nước"
-                                                        class="form-control" name="waterFee" id="waterFee"
-                                                        th:value="${building != null ? building.waterFee : ''}" />
+                                                    <input class="form-control" id="waterFee" name="waterFee"
+                                                        placeholder="Nhập tiền nước"
+                                                        th:value="${building != null ? building.waterFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noWaterFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tiền nước
@@ -349,9 +364,10 @@
                                                     Đặt cọc
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập tiền đặt cọc"
-                                                        class="form-control" name="deposit" id="deposit"
-                                                        th:value="${building != null ? building.deposit : ''}" />
+                                                    <input class="form-control" id="deposit" name="deposit"
+                                                        placeholder="Nhập tiền đặt cọc"
+                                                        th:value="${building != null ? building.deposit : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noDeposit"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tiền cọc
@@ -364,9 +380,10 @@
                                                     Thanh toán
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" placeholder="Nhập tiền thanh toán"
-                                                        class="form-control" name="payment" id="payment"
-                                                        th:value="${building != null ? building.payment : ''}" />
+                                                    <input class="form-control" id="payment" name="payment"
+                                                        placeholder="Nhập tiền thanh toán"
+                                                        th:value="${building != null ? building.payment : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noPayment"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập thanh toán
@@ -379,9 +396,10 @@
                                                     Thời hạn thuê
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Thời hạn thuê" class="form-control"
-                                                        name="rentTime" id="rentTime"
-                                                        th:value="${building != null ? building.rentTime : ''}" />
+                                                    <input class="form-control" id="rentTime" name="rentTime"
+                                                        placeholder="Thời hạn thuê"
+                                                        th:value="${building != null ? building.rentTime : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noRentTime"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập thời hạn thuê
@@ -394,9 +412,10 @@
                                                     Thời gian trang trí
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="..." class="form-control"
-                                                        name="decorationTime" id="decorationTime"
-                                                        th:value="${building != null ? building.decorationTime : ''}" />
+                                                    <input class="form-control" id="decorationTime"
+                                                        name="decorationTime" placeholder="..."
+                                                        th:value="${building != null ? building.decorationTime : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noDecorationTime"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập thời gian trang trí
@@ -410,9 +429,10 @@
                                                     Tên quản lý
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập tên quản lý"
-                                                        class="form-control" name="managerName" id="managerName"
-                                                        th:value="${building != null ? building.managerName : ''}" />
+                                                    <input class="form-control" id="managerName" name="managerName"
+                                                        placeholder="Nhập tên quản lý"
+                                                        th:value="${building != null ? building.managerName : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noManagerName"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập tên quản lý
@@ -426,9 +446,10 @@
                                                     SĐT quản lý
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Nhập sđt quản lý"
-                                                        class="form-control" name="managerPhone" id="managerPhone"
-                                                        th:value="${building != null ? building.managerPhone : ''}" />
+                                                    <input class="form-control" id="managerPhone" name="managerPhone"
+                                                        placeholder="Nhập sđt quản lý"
+                                                        th:value="${building != null ? building.managerPhone : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noManagerPhone"
                                                         style="display: none; color: red">
                                                         SĐT phải có đúng 10 số
@@ -442,8 +463,9 @@
                                                 </label>
                                                 <div class="col-sm-9">
                                                     <label class="checkbox-inline" th:each="type:${typeCode}">
-                                                        <input type="checkbox" name="typeCode" th:value="${type.key}"
-                                                            th:checked="${building != null and building.typeCode != null and building.typeCode.contains(type.key)}" />
+                                                        <input name="typeCode"
+                                                            th:checked="${building != null and building.typeCode != null and building.typeCode.contains(type.key)}"
+                                                            th:value="${type.key}" type="checkbox" />
                                                         <span th:text="${type.value}"> </span>
                                                     </label>
                                                     <div>
@@ -460,9 +482,10 @@
                                                     Phí mô giới
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="number" step="1" placeholder="Nhập phí mô giới"
-                                                        class="form-control" name="brokerageFee" id="brokerageFee"
-                                                        th:value="${building != null ? building.brokerageFee : ''}" />
+                                                    <input class="form-control" id="brokerageFee" name="brokerageFee"
+                                                        placeholder="Nhập phí mô giới" step="1"
+                                                        th:value="${building != null ? building.brokerageFee : ''}"
+                                                        type="number" />
                                                     <span class="error-messsage" id="noBrokerageFee"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập phí mô giới (>0)
@@ -475,9 +498,10 @@
                                                     Ghi chú
                                                 </label>
                                                 <div class="col-sm-6">
-                                                    <input type="text" placeholder="Ghi chú ..." class="form-control"
-                                                        name="note" id="note"
-                                                        th:value="${building != null ? building.note : ''}" />
+                                                    <input class="form-control" id="note" name="note"
+                                                        placeholder="Ghi chú ..."
+                                                        th:value="${building != null ? building.note : ''}"
+                                                        type="text" />
                                                     <span class="error-messsage" id="noNote"
                                                         style="display: none; color: red">
                                                         Vui lòng nhập ghi chú
@@ -485,47 +509,19 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
-                                                    Link tòa nhà
-                                                </label>
-                                                <div class="col-sm-6">
-                                                    <input type="text" placeholder="Link ..." class="form-control"
-                                                        name="linkOfBuilding" id="linkOfBuilding"
-                                                        th:value="${building != null ? building.linkOfBuilding : ''}" />
-                                                    <span class="error-messsage" id="noLinkOfBuilding"
-                                                        style="display: none; color: red">
-                                                        Vui lòng nhập link tòa nhà
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
-                                                    Map
-                                                </label>
-                                                <div class="col-sm-6">
-                                                    <input type="text" placeholder="Map ..." class="form-control"
-                                                        name="map" id="map"
-                                                        th:value="${building != null ? building.map : ''}" />
-                                                    <span class="error-messsage" id="noMap"
-                                                        style="display: none; color: red">
-                                                        Vui lòng nhập map
-                                                    </span>
-                                                </div>
-                                            </div>
 
                                             <div class="form-actions center">
                                                 <a href="/admin/buildings/list">
-                                                    <button type="button" class="btn btn-sm btn-danger">
+                                                    <button class="btn btn-sm btn-danger" type="button">
                                                         <i class="ace-icon glyphicon glyphicon-remove"></i>
                                                         Hủy thao tác
                                                     </button>
                                                 </a>
-                                                <button type="button" class="btn btn-sm btn-success" id="btnAddBuilding"
-                                                    th:text="${building != null && building.id != null} ? 'Cập nhật thông tin' : 'Thêm tòa nhà'"></button>
+                                                <button class="btn btn-sm btn-success" id="btnAddBuilding"
+                                                    th:text="${building != null && building.id != null} ? 'Cập nhật thông tin' : 'Thêm tòa nhà'"
+                                                    type="button"></button>
                                             </div>
-                                            <input type="hidden" name="id" th:value="${building.id}" />
+                                            <input name="id" th:value="${building.id}" type="hidden" />
                                         </form>
                                     </div>
                                 </div>
@@ -553,7 +549,7 @@
                 "noDirection", "noLevel", "noRentArea", "noManagerName", "noManagerPhone", "noType",
                 "noRentPrice", "noRentPriceDescription", "noServiceFee", "noCarFee", "noMotoFee",
                 "noOvertimeFee", "noElectricityFee", "noWaterFee", "noDeposit", "noPayment",
-                "noRentTime", "noDecorationTime", "noBrokerageFee", "noNote", "noLinkOfBuilding", "noMap"
+                "noRentTime", "noDecorationTime", "noBrokerageFee", "noNote"
             ];
             errorIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -588,9 +584,7 @@
                 "payment": "noPayment",
                 "rentTime": "noRentTime",
                 "decorationTime": "noDecorationTime",
-                "note": "noNote",
-                "linkOfBuilding": "noLinkOfBuilding",
-                "map": "noMap"
+                "note": "noNote"
             };
             for (let field in requiredFields) {
                 if (json[field] === "" || json[field] === undefined) {
