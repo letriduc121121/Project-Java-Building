@@ -1,6 +1,6 @@
 package com.devon.building.validator;
 
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -36,7 +36,7 @@ public class ProductFormValidator implements Validator {
          if (id.toString().matches("\\s+")) {
             errors.rejectValue("code", "Pattern.productForm.code");
          } else if (productForm.isNewProduct()) {
-            Building building = productRepository.findProduct(id);
+            BuildingEntity building = productRepository.findProduct(id);
             if (building != null) {
                errors.rejectValue("code", "Duplicate.productForm.code");
             }

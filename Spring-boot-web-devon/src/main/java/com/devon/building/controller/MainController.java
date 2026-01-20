@@ -1,6 +1,6 @@
 package com.devon.building.controller;
 
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import com.devon.building.form.CustomerForm;
 import com.devon.building.model.CartInfo;
 import com.devon.building.model.CustomerInfo;
@@ -94,7 +94,7 @@ public class MainController {
     public String listProductHandler(HttpServletRequest request, Model model, //
                                      @RequestParam(value = "id", defaultValue = "") Long id) {
 
-        Building building = null;
+        BuildingEntity building = null;
         if (id != null) {
             building = productRepository.findProduct(id);
         }
@@ -114,7 +114,7 @@ public class MainController {
     @RequestMapping({"/shoppingCartRemoveProduct"})
     public String removeProductHandler(HttpServletRequest request, Model model, //
                                        @RequestParam(value = "id", defaultValue = "") Long id) {
-        Building building = null;
+        BuildingEntity building = null;
         if (id != null) {
             building = productRepository.findProduct(id);
         }
@@ -255,7 +255,7 @@ public class MainController {
 
     @RequestMapping(value = {"/productImage"}, method = RequestMethod.GET)
     public void productImage(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam("id") Long id) throws IOException {
-        Building building = null;
+        BuildingEntity building = null;
         if (id != null) {
             building = this.productRepository.findProduct(id);
         }

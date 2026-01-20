@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.devon.building.entity.Order;
 import com.devon.building.entity.OrderDetail;
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import com.devon.building.pagination.PaginationResult;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -72,7 +72,7 @@ public class OrderRepository {
             detail.setQuanity(line.getQuantity());
  
             Long id = line.getProductInfo().getId();
-            Building building = this.productRepository.findProduct(id);
+            BuildingEntity building = this.productRepository.findProduct(id);
             detail.setBuilding(building);
 
             entityManager.persist(detail);

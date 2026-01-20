@@ -1,6 +1,6 @@
 package com.devon.building.controller.admin;
 
-import com.devon.building.entity.Building;
+import com.devon.building.entity.BuildingEntity;
 import com.devon.building.form.ProductForm;
 import com.devon.building.model.OrderDetailInfo;
 import com.devon.building.model.OrderInfo;
@@ -92,7 +92,7 @@ public class AdminController {
         ProductForm productForm = null;
 
         if (id != null) {
-            Building building = productRepository.findProduct(id);
+            BuildingEntity building = productRepository.findProduct(id);
             if (building != null) {
                 productForm = new ProductForm(building);
             }
