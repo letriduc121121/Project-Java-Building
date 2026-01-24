@@ -7,7 +7,6 @@ import com.devon.building.model.request.BuildingSearchRequest;
 import com.devon.building.model.response.BuildingSearchResponse;
 import com.devon.building.service.BuildingService;
 import com.devon.building.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +19,16 @@ import java.util.List;
 @Controller
 @RequestMapping("admin/buildings")
 public class BuildingController {
+    private static final String ATTR_DISTRICTS = "districts";
+    private static final String ATTR_TYPE_CODE = "typeCode";
+    
+    private final UserService userService;
+    private final BuildingService buildingService;
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private BuildingService buildingService;
+    public BuildingController(UserService userService, BuildingService buildingService) {
+        this.userService = userService;
+        this.buildingService = buildingService;
+    }
 
     @GetMapping("/list")
     public String getListBuilding(@ModelAttribute BuildingSearchRequest buildingSearchRequest, Model model) {
@@ -34,17 +38,17 @@ public class BuildingController {
         // Thêm dữ liệu vào model
         model.addAttribute("resultBuilding", resultBuildings);
         model.addAttribute("modelSearch", buildingSearchRequest);
-        model.addAttribute("districts", District.getDistrict());
+        model.addAttribute(ATTR_DISTRICTS, District.getDistrict());
         model.addAttribute("staffs", userService.getAllStaff());
-        model.addAttribute("typeCode", RentType.getTypeCode());
+        model.addAttribute(ATTR_TYPE_CODE, RentType.getTypeCode());
         return "admin/building/buildingList";
     }
 
     @GetMapping("/edit")
     public String createBuilding(Model model) {
         model.addAttribute("building", new BuildingDTO()); // Thêm object rỗng để tránh lỗi Thymeleaf
-        model.addAttribute("districts", District.getDistrict());
-        model.addAttribute("typeCode", RentType.getTypeCode());
+        model.addAttribute(ATTR_DISTRICTS, District.getDistrict());
+        model.addAttribute(ATTR_TYPE_CODE, RentType.getTypeCode());
         return "admin/building/buildingEdit";
     }
 
@@ -52,8 +56,8 @@ public class BuildingController {
     public String updateBuilding(Model model, @PathVariable long id) {
         BuildingDTO building = buildingService.findById(id);
         model.addAttribute("building", building);
-        model.addAttribute("districts", District.getDistrict());
-        model.addAttribute("typeCode", RentType.getTypeCode());
+        model.addAttribute(ATTR_DISTRICTS, District.getDistrict());
+        model.addAttribute(ATTR_TYPE_CODE, RentType.getTypeCode());
         return "admin/building/buildingEdit";
     }
 }

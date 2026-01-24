@@ -21,7 +21,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,33 +31,37 @@ import java.util.stream.Collectors;
 
 @Service
 public class BuildingServiceImpl implements BuildingService {
-    @Autowired
-    private ModelMapper modelMapper;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final BuildingRepository buildingRepository;
+    private final RentAreaRepository rentAreaRepository;
+    private final AssignmentBuildingRepository assignmentBuildingRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final BuildingConvertor buildingConvertor;
+    private final BuildingSearchBuilderConvertor buildingSearchBuilderConvertor;
 
-    @Autowired
-    private BuildingRepository buildingRepository;
-
-    @Autowired
-    private RentAreaRepository rentAreaRepository;
-
-    @Autowired
-    private AssignmentBuildingRepository assignmentBuildingRepository;
-
-    @Autowired
-    private OrderDetailRepository orderDetailRepository;
-
-    @Autowired
-    private BuildingConvertor buildingConvertor;
-
-    @Autowired
-    // dug cai nay ko can khoi tao
-    private BuildingSearchBuilderConvertor buildingSearchBuilderConvertor;
     @PersistenceContext
     private EntityManager entityManager;
 
+    public BuildingServiceImpl(
+            ModelMapper modelMapper,
+            UserRepository userRepository,
+            BuildingRepository buildingRepository,
+            RentAreaRepository rentAreaRepository,
+            AssignmentBuildingRepository assignmentBuildingRepository,
+            OrderDetailRepository orderDetailRepository,
+            BuildingConvertor buildingConvertor,
+            BuildingSearchBuilderConvertor buildingSearchBuilderConvertor) {
+        this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
+        this.buildingRepository = buildingRepository;
+        this.rentAreaRepository = rentAreaRepository;
+        this.assignmentBuildingRepository = assignmentBuildingRepository;
+        this.orderDetailRepository = orderDetailRepository;
+        this.buildingConvertor = buildingConvertor;
+        this.buildingSearchBuilderConvertor = buildingSearchBuilderConvertor;
+    }
 
     @Override
     public List<BuildingSearchResponse> searchBuildings(BuildingSearchRequest request) {
