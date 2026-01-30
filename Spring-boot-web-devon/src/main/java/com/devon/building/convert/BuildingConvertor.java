@@ -8,7 +8,6 @@ import com.devon.building.entity.BuildingEntity;
 import com.devon.building.entity.RentAreaEntity;
 import com.devon.building.enums.District;
 import com.devon.building.exception.InvalidBuildingException;
-import com.devon.building.model.request.BuildingSearchRequest;
 import com.devon.building.model.response.BuildingSearchResponse;
 import com.devon.building.model.dto.BuildingDTO;
 import jakarta.persistence.EntityManager;
@@ -21,12 +20,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BuildingConvertor {
-
-//	@Autowired
-//	private DistrictRepository districtRepository;
-
-//	@Autowired
-//	private RentAreaRepository rentAreaRepository;
 
     @Autowired
     private ModelMapper modelMapper;
