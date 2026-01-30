@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "User")
@@ -15,7 +18,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends BaseEntity implements Serializable{
+public class User extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -2054386655979281969L;
@@ -51,6 +54,9 @@ public class User extends BaseEntity implements Serializable{
     @Lob
     @Column(name = "image", length = Integer.MAX_VALUE, nullable = true)
     private byte[] image;
+
+    @ManyToMany(mappedBy = "staffs", fetch = FetchType.LAZY)
+    private List<BuildingEntity> buildings = new ArrayList<>();
 
     public User(Long id, String userName, Boolean active, String userRole, String fullName, String phone) {
         this.id = id;

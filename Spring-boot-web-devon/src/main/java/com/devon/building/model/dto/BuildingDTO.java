@@ -87,4 +87,8 @@ public class BuildingDTO extends AbstractDTO {
 
     private String brokerageFee;
 
+    private String linkOfBuilding;
+
+    private String map;
+
 }

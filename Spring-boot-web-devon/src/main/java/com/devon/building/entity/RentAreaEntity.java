@@ -1,12 +1,11 @@
 package com.devon.building.entity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -20,7 +19,7 @@ public class RentAreaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "value",nullable=false)
+    @Column(name = "value", nullable = false)
     private Long value;
 
     @Column(name = "createddate")
@@ -35,12 +34,7 @@ public class RentAreaEntity {
     @Column(name = "modifiedby")
     private String modifiedBy;
 
-//	@Column(name = "buildingid")
-//	private Long buildingId;
-
     @ManyToOne
-    @JoinColumn(name="buildingid")
+    @JoinColumn(name = "buildingid")
     private BuildingEntity building;
-
-
 }

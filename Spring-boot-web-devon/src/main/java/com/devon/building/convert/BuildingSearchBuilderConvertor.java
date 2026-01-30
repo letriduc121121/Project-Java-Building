@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BuildingSearchBuilderConvertor {
-    public BuildingSearchBuilder toBuildingSearchBuilder(BuildingSearchRequest request) {
 
-        BuildingSearchBuilder buildingSearchBuilder = new BuildingSearchBuilder.Builder()
+    public BuildingSearchBuilder toBuildingSearchBuilder(BuildingSearchRequest request) {
+        return new BuildingSearchBuilder.Builder()
                 .setName(request.getName())
                 .setFloorArea(request.getFloorArea())
                 .setDistrictCode(request.getDistrictCode())
@@ -26,7 +26,5 @@ public class BuildingSearchBuilderConvertor {
                 .setStaffId(request.getStaffId())
                 .setTypeCode(request.getTypeCode())
                 .build();
-
-        return buildingSearchBuilder;
     }
 }

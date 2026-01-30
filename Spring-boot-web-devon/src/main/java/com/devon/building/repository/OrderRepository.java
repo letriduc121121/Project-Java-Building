@@ -12,7 +12,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +24,16 @@ import com.devon.building.model.OrderInfo;
 @Transactional
 @Repository
 public class OrderRepository {
- 
+
     @PersistenceContext
     private EntityManager entityManager;
- 
-    @Autowired
-    private ProductRepository productRepository;
- 
+
+    private final ProductRepository productRepository;
+
+    public OrderRepository(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     private int getMaxOrderNum() {
         String sql = "Select max(o.orderNum) from " + Order.class.getName() + " o ";
         Query query = entityManager.createQuery(sql, Integer.class);
@@ -41,18 +43,18 @@ public class OrderRepository {
         }
         return value;
     }
- 
+
     @Transactional(rollbackFor = Exception.class)
     public void saveOrder(CartInfo cartInfo) {
- 
+
         int orderNum = this.getMaxOrderNum() + 1;
         Order order = new Order();
- 
+
         order.setId(UUID.randomUUID().toString());
         order.setOrderNum(orderNum);
         order.setOrderDate(new Date());
         order.setAmount(cartInfo.getAmountTotal());
- 
+
         CustomerInfo customerInfo = cartInfo.getCustomerInfo();
         order.setCustomerName(customerInfo.getName());
         order.setCustomerEmail(customerInfo.getEmail());
@@ -60,9 +62,9 @@ public class OrderRepository {
         order.setCustomerAddress(customerInfo.getAddress());
 
         entityManager.persist(order);
- 
+
         List<CartLineInfo> lines = cartInfo.getCartLines();
- 
+
         for (CartLineInfo line : lines) {
             OrderDetail detail = new OrderDetail();
             detail.setId(UUID.randomUUID().toString());
@@ -70,20 +72,20 @@ public class OrderRepository {
             detail.setAmount(line.getAmount());
             detail.setPrice(line.getProductInfo().getPrice());
             detail.setQuanity(line.getQuantity());
- 
+
             Long id = line.getProductInfo().getId();
             BuildingEntity building = this.productRepository.findProduct(id);
             detail.setBuilding(building);
 
             entityManager.persist(detail);
         }
- 
+
         // Order Number!
         cartInfo.setOrderNum(orderNum);
         // Flush
         entityManager.flush();
     }
- 
+
     // @page = 1, 2, ...
     public PaginationResult<OrderInfo> listOrderInfo(int page, int maxResult, int maxNavigationPage) {
 
@@ -100,11 +102,11 @@ public class OrderRepository {
 
         return new PaginationResult<>(query, countQuery, page, maxResult, maxNavigationPage);
     }
- 
+
     public Order findOrder(String orderId) {
         return entityManager.find(Order.class, orderId);
     }
- 
+
     public OrderInfo getOrderInfo(String orderId) {
         Order order = this.findOrder(orderId);
         if (order == null) {
@@ -114,7 +116,7 @@ public class OrderRepository {
                 order.getOrderNum(), order.getAmount(), order.getCustomerName(), //
                 order.getCustomerAddress(), order.getCustomerEmail(), order.getCustomerPhone());
     }
- 
+
     public List<OrderDetailInfo> listOrderDetailInfos(String orderId) {
         String sql = "Select new " + OrderDetailInfo.class.getName() //
                 + "(d.id, d.product.code, d.product.name , d.quanity,d.price,d.amount) "//
@@ -123,8 +125,8 @@ public class OrderRepository {
 
         Query query = entityManager.createQuery(sql, OrderDetailInfo.class);
         query.setParameter("orderId", orderId);
- 
+
         return query.getResultList();
     }
- 
+
 }
