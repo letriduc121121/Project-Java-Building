@@ -1,8 +1,6 @@
 package com.devon.building.enums;
 
 import lombok.Getter;
-
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

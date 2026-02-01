@@ -15,42 +15,27 @@ public class BuildingDTO extends AbstractDTO {
     @NotBlank(message = "Name Building is Blank")
     private String name;
 
-    @NotBlank(message = "Street is required")
     private String street;
 
-    @NotBlank(message = "Ward is required")
     private String ward;
 
     @NotBlank(message = "District is required")
     private String district;
-
-    @NotNull(message = "Number of basement is required")
-    @Min(value = 0, message = "Number of basement must be positive")
     private Long numberOfBasement;
-
-    @NotNull(message = "Floor area is required")
-    @Min(value = 0, message = "Floor area must be positive")
     private Long floorArea;
-
-    @NotBlank(message = "Level is required")
     private String level;
 
     @Size(min = 1, message = "Type Code is required")
-    private List<String> typeCode;
+    private List < String > typeCode;
 
-    @NotBlank(message = "Overtime fee is required")
     private String overtimeFee;
 
-    @NotBlank(message = "Electricity fee is required")
     private String electricityFee;
 
-    @NotBlank(message = "Deposit is required")
     private String deposit;
 
-    @NotBlank(message = "Payment is required")
     private String payment;
 
-    @NotBlank(message = "Rent time is required")
     private String rentTime;
 
     private String decorationTime;
@@ -82,9 +67,12 @@ public class BuildingDTO extends AbstractDTO {
     @Min(value = 0, message = "Rent Price must be a positive integer")
     private Long rentPrice;
 
-    @NotBlank(message = "Service fee is required")
     private String serviceFee;
 
     private String brokerageFee;
+
+    private String linkOfBuilding;
+
+    private String map;
 
 }

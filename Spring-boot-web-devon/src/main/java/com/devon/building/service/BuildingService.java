@@ -8,13 +8,12 @@ import com.devon.building.model.request.BuildingSearchRequest;
 import com.devon.building.model.response.BuildingSearchResponse;
 
 import java.util.List;
-import java.util.Map;
 
 public interface BuildingService {
     List<BuildingSearchResponse> searchBuildings(BuildingSearchRequest request);
 
-    void delete(List<Long > ids);
-    
+    void delete(List<Long> ids);
+
     BuildingDTO findById(Long id);
 
     BuildingEntity create(BuildingDTO buildingDTO);
@@ -22,6 +21,6 @@ public interface BuildingService {
     BuildingEntity update(BuildingDTO buildingDTO);
 
     ResponseDTO loadStaffByBuildingId(Long id);
-    
+
     void assignBuilding(AssignBuildingDTO dto);
 }

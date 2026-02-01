@@ -1,6 +1,5 @@
 package com.devon.building.repository;
 
-import com.devon.building.builder.BuildingSearchBuilder;
 import com.devon.building.entity.BuildingEntity;
 import com.devon.building.repository.custom.BuildingRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
