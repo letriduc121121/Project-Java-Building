@@ -33,7 +33,6 @@ public class BuildingServiceImpl implements BuildingService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final BuildingRepository buildingRepository;
-    private final RentAreaRepository rentAreaRepository;
     private final BuildingConvertor buildingConvertor;
     private final BuildingSearchBuilderConvertor buildingSearchBuilderConvertor;
 
@@ -44,13 +43,11 @@ public class BuildingServiceImpl implements BuildingService {
             ModelMapper modelMapper,
             UserRepository userRepository,
             BuildingRepository buildingRepository,
-            RentAreaRepository rentAreaRepository,
             BuildingConvertor buildingConvertor,
             BuildingSearchBuilderConvertor buildingSearchBuilderConvertor) {
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.buildingRepository = buildingRepository;
-        this.rentAreaRepository = rentAreaRepository;
         this.buildingConvertor = buildingConvertor;
         this.buildingSearchBuilderConvertor = buildingSearchBuilderConvertor;
     }
@@ -101,9 +98,6 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     @Transactional
     public void delete(List<Long> ids) {
-        // Xóa rent area (orphanRemoval sẽ tự động xử lý)
-        rentAreaRepository.deleteAllByBuilding_IdIn(ids);
-        // Cuối cùng xóa building - JPA tự động xóa assignmentbuilding
         buildingRepository.deleteByIdIn(ids);
     }
 
@@ -186,9 +180,9 @@ public class BuildingServiceImpl implements BuildingService {
     @Transactional
     public void assignBuilding(AssignBuildingDTO dto) {
         BuildingEntity building = buildingRepository.findById(dto.getBuildingId()).orElseThrow();
-        building.getStaffs().clear();   // xóa assignment cũ
         List<User> newStaffs = userRepository.findAllById(dto.getStaffIds());
-        building.getStaffs().addAll(newStaffs);
+        building.setStaffs(newStaffs);
+        buildingRepository.save(building);
 
     }
 
