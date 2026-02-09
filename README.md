@@ -158,11 +158,11 @@ mvn spring-boot:run
 ```
 Admin Account:
 - Username: admin
-- Password: [check database]
+- Password: 123
 
 Staff Account:
-- Username: staff
-- Password: [check database]
+- Username: manager1
+- Password: 123
 ```
 
 ## 🔧 Cấu Hình
