@@ -237,8 +237,8 @@ Dự án này được phát hành dưới giấy phép MIT License.
 ## 👨‍💻 Tác Giả
 
 **Your Name**
-- Email: your.email@example.com
-- GitHub: [@your-username](https://github.com/your-username)
+- Email: letriduc121121@gmail.com
+- GitHub: letriduc121121@gmail.com
 
 ## 🙏 Lời Cảm Ơn
 
