@@ -118,13 +118,22 @@ public class BuildingEntity {
     @Column(name = "managerphone")
     private String managerPhone;
 
-    // Getter & Setter
     @Column(name = "district")
     private String district;
 
     @Column(name = "type")
     private String type;
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = true)
     private List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
+    //tranh sd cascade cho manytomany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "assignmentbuilding",
+            joinColumns = @JoinColumn(name = "buildingid"),
+            inverseJoinColumns = @JoinColumn(name = "staffid")
+    )
+    private List<User> staffs = new ArrayList<>();
 }

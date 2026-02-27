@@ -1,7 +1,6 @@
 package com.devon.building.repository;
 
 import com.devon.building.entity.User;
-import com.devon.building.model.dto.UserDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;

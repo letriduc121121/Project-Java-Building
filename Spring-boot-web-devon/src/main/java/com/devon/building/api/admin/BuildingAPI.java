@@ -5,20 +5,23 @@ import com.devon.building.model.dto.BuildingDTO;
 import com.devon.building.model.dto.ResponseDTO;
 import com.devon.building.service.BuildingService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/admin/api/buildings")
 public class BuildingAPI {
-    @Autowired
-    private BuildingService buildingService;
+    private static final String SERVER_ERROR_PREFIX = "Server Error: ";
+    
+    private final BuildingService buildingService;
+
+    public BuildingAPI(BuildingService buildingService) {
+        this.buildingService = buildingService;
+    }
 
     @PostMapping
     public ResponseEntity<ResponseDTO> addBuilding(@RequestBody @Valid BuildingDTO dto, BindingResult result) {
@@ -26,7 +29,7 @@ public class BuildingAPI {
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.toList());
+                    .toList();
             responseDTO.setDetail(errors);
             responseDTO.setMessage("Failed to add Building");
             return ResponseEntity.badRequest().body(responseDTO);
@@ -37,7 +40,7 @@ public class BuildingAPI {
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            responseDTO.setMessage("Server Error: " + e.getMessage());
+            responseDTO.setMessage(SERVER_ERROR_PREFIX + e.getMessage());
             return ResponseEntity.internalServerError().body(responseDTO);
         }
     }
@@ -48,7 +51,7 @@ public class BuildingAPI {
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.toList());
+                    .toList();
             responseDTO.setDetail(errors);
             responseDTO.setMessage("Failed to update Building");
             return ResponseEntity.badRequest().body(responseDTO);
@@ -63,7 +66,7 @@ public class BuildingAPI {
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            responseDTO.setMessage("Server Error: " + e.getMessage());
+            responseDTO.setMessage(SERVER_ERROR_PREFIX + e.getMessage());
             return ResponseEntity.internalServerError().body(responseDTO);
         }
     }
@@ -77,7 +80,7 @@ public class BuildingAPI {
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            responseDTO.setMessage("Server Error: " + e.getMessage());
+            responseDTO.setMessage(SERVER_ERROR_PREFIX + e.getMessage());
             return ResponseEntity.internalServerError().body(responseDTO);
         }
     }
@@ -102,7 +105,7 @@ public class BuildingAPI {
         if (result.hasErrors()) {
             List<String> errors = result.getFieldErrors().stream()
                     .map(FieldError::getDefaultMessage)
-                    .collect(Collectors.toList());
+                    .toList();
             responseDTO.setDetail(errors);
             responseDTO.setMessage("Validation failed");
             return ResponseEntity.badRequest().body(responseDTO);
@@ -113,7 +116,7 @@ public class BuildingAPI {
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            responseDTO.setMessage("Server Error: " + e.getMessage());
+            responseDTO.setMessage(SERVER_ERROR_PREFIX + e.getMessage());
             return ResponseEntity.internalServerError().body(responseDTO);
         }
     }

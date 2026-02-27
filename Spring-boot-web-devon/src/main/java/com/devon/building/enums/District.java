@@ -1,8 +1,6 @@
 package com.devon.building.enums;
 
 import lombok.Getter;
-
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -15,14 +13,16 @@ public enum District {
     QUAN_10("Quận 10");
     // ham khoi tao
     private final String districtName;
-    District(String districtName){
+
+    District(String districtName) {
         this.districtName = districtName;
     }
-    public static Map<String,String> getDistrict(){
-        Map<String,String> map = new LinkedHashMap<>();
-        for(District d: District.values()){
-            map.put(d.toString(),d.districtName);
+
+    public static Map<String, String> getDistrict() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (District d : District.values()) {
+            map.put(d.toString(), d.districtName);
         }
-        return  map;
+        return map;
     }
 }

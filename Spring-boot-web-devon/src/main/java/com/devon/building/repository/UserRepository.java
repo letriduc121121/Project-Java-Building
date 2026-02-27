@@ -1,7 +1,6 @@
 package com.devon.building.repository;
 
 import com.devon.building.entity.User;
-import com.devon.building.enums.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

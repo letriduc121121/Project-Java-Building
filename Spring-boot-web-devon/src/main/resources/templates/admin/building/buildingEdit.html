@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8" />
@@ -15,6 +15,7 @@
             try {
                 ace.settings.check("main-container", "fixed");
             } catch (e) {
+                console.error('Ace settings error:', e);
             }
         </script>
 
@@ -27,6 +28,7 @@
                         try {
                             ace.settings.check("breadcrumbs", "fixed");
                         } catch (e) {
+                            console.error('Ace breadcrumbs error:', e);
                         }
                     </script>
 
@@ -392,7 +394,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
+                                                <label class="col-sm-3 control-label no-padding-right" for="rentTime">
                                                     Thời hạn thuê
                                                 </label>
                                                 <div class="col-sm-6">
@@ -408,7 +410,8 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="decorationTime">
                                                     Thời gian trang trí
                                                 </label>
                                                 <div class="col-sm-6">
@@ -458,12 +461,12 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
+                                                <label class="col-sm-3 control-label no-padding-right" for="typeCode">
                                                     Loại nhà
                                                 </label>
                                                 <div class="col-sm-9">
                                                     <label class="checkbox-inline" th:each="type:${typeCode}">
-                                                        <input name="typeCode"
+                                                        <input name="typeCode" id="typeCode"
                                                             th:checked="${building != null and building.typeCode != null and building.typeCode.contains(type.key)}"
                                                             th:value="${type.key}" type="checkbox" />
                                                         <span th:text="${type.value}"> </span>
@@ -478,7 +481,8 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="brokerageFee">
                                                     Phí mô giới
                                                 </label>
                                                 <div class="col-sm-6">
@@ -494,7 +498,40 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="col-sm-3 control-label no-padding-right">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="linkOfBuilding">
+                                                    Link tòa nhà
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="linkOfBuilding"
+                                                        name="linkOfBuilding"
+                                                        placeholder="Nhập link website hoặc thông tin tòa nhà"
+                                                        th:value="${building != null ? building.linkOfBuilding : ''}"
+                                                        type="url" />
+                                                    <span class="error-messsage" id="noLinkOfBuilding"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập link tòa nhà hợp lệ
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="map">
+                                                    Link bản đồ
+                                                </label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="map" name="map"
+                                                        placeholder="Nhập link Google Maps hoặc bản đồ"
+                                                        th:value="${building != null ? building.map : ''}" type="url" />
+                                                    <span class="error-messsage" id="noMap"
+                                                        style="display: none; color: red">
+                                                        Vui lòng nhập link bản đồ hợp lệ
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="note">
                                                     Ghi chú
                                                 </label>
                                                 <div class="col-sm-6">
@@ -557,64 +594,33 @@
             });
         }
 
-        //ktra theo 4 nhóm
+        //Kiểm tra các trường bắt buộc theo backend
         function validateData(json) {
             resetErrorMessage(); // Reset all error messages
             let check = true;
 
-            // ko đc để trống
+            // Các trường bắt buộc (required fields)
             const requiredFields = {
                 "name": "noName",
-                "street": "noStreet",
-                "ward": "noWard",
                 "district": "noDistrict",
-                "structure": "noStructure",
-                "direction": "noDirection",
                 "rentArea": "noRentArea",
-                "managerName": "noManagerName",
-                "level": "noLevel",
-                "rentPriceDescription": "noRentPriceDescription",
-                "serviceFee": "noServiceFee",
-                "carFee": "noCarFee",
-                "motoFee": "noMotoFee",
-                "overtimeFee": "noOvertimeFee",
-                "electricityFee": "noElectricityFee",
-                "waterFee": "noWaterFee",
-                "deposit": "noDeposit",
-                "payment": "noPayment",
-                "rentTime": "noRentTime",
-                "decorationTime": "noDecorationTime",
-                "note": "noNote"
+                "managerName": "noManagerName"
             };
+
             for (let field in requiredFields) {
                 if (json[field] === "" || json[field] === undefined) {
                     document.getElementById(requiredFields[field]).style.display = "block";
                     check = false;
                 }
             }
-            //kiểm tra số dương
-            const positiveFields = {
-                "numberOfBasement": "noNumberOfBasement",
-                "floorArea": "noFloorArea",
-                "brokerageFee": "noBrokerageFee"
-            };
-            for (let field in positiveFields) {
-                if (json[field] === "" || json[field] === undefined) {
-                    document.getElementById(positiveFields[field]).style.display = "block";
-                    check = false;
-                } else {
-                    if (Number(json[field]) < 0) {
-                        document.getElementById(positiveFields[field]).style.display = "block";
-                        check = false;
-                    }
-                }
-            }
-            // Kiểm tra loại tòa nhà
+
+            // Kiểm tra loại tòa nhà (typeCode) - ít nhất 1 loại
             if (json["typeCode"].length === 0) {
                 document.getElementById("noType").style.display = "block";
                 check = false;
             }
-            // Kiểm tra SĐT (chỉ validate nếu có nhập)
+
+            // Kiểm tra SĐT (managerPhone) - bắt buộc và đúng 10 số
             const phoneRegex = /^\d{10}$/;
             if (json["managerPhone"] === "" || json["managerPhone"] === undefined) {
                 document.getElementById("noManagerPhone").style.display = "block";
@@ -625,7 +631,8 @@
                 document.getElementById("noManagerPhone").innerText = "SĐT phải có đúng 10 số";
                 check = false;
             }
-            // Kiểm tra Giá thuê (nguyên dương >0 )
+
+            // Kiểm tra Giá thuê (rentPrice) - bắt buộc, số nguyên >= 0
             if (json["rentPrice"] === "" || json["rentPrice"] === undefined) {
                 document.getElementById("noRentPrice").style.display = "block";
                 document.getElementById("noRentPrice").innerText = "Vui lòng nhập giá thuê";
@@ -638,6 +645,7 @@
                     check = false;
                 }
             }
+
             return check;
         }
 
@@ -662,15 +670,24 @@
                 return;
             }
 
-            console.log("Dữ liệu gửi lên:", JSON.stringify(json));
+            // Loại bỏ các trường rỗng (tránh lỗi "Incorrect decimal value" khi update database)
+            const cleanedJson = {};
+            for (let key in json) {
+                // Giữ lại nếu: không phải chuỗi rỗng, HOẶC là mảng (typeCode), HOẶC là id
+                if (json[key] !== "" || Array.isArray(json[key]) || key === "id") {
+                    cleanedJson[key] = json[key];
+                }
+            }
+
+            console.log("Dữ liệu gửi lên:", JSON.stringify(cleanedJson));
 
             // Kiểm tra thêm mới hay cập nhật
-            if (json["id"] && json["id"] !== "") {
+            if (cleanedJson["id"] && cleanedJson["id"] !== "") {
                 // Update building
-                updateBuilding(json);
+                updateBuilding(cleanedJson);
             } else {
                 // Add new building
-                addBuilding(json);
+                addBuilding(cleanedJson);
             }
         });
 
@@ -685,7 +702,7 @@
                 success: function (response) {
                     alert(response.message);
                     console.log(response);
-                    window.location.href = "/admin/buildings/list";
+                    location.href = "/admin/buildings/list";
                 },
                 error: function (err) {
                     console.log("Error:", err);
@@ -713,7 +730,7 @@
                 success: function (response) {
                     alert(response.message);
                     console.log(response);
-                    window.location.href = "/admin/buildings/list";
+                    location.href = "/admin/buildings/list";
                 },
                 error: function (err) {
                     console.log("Error:", err);
