@@ -3,11 +3,8 @@ package com.devon.building.service.impl;
 import com.devon.building.builder.BuildingSearchBuilder;
 import com.devon.building.convert.BuildingConvertor;
 import com.devon.building.convert.BuildingSearchBuilderConvertor;
-import com.devon.building.entity.AssignmentBuildingEntity;
-import com.devon.building.entity.BuildingEntity;
-import com.devon.building.entity.RentAreaEntity;
-import com.devon.building.entity.User;
-import com.devon.building.exception.InvalidBuildingException;
+import com.devon.building.entity.*;
+import com.devon.building.exception.InvalidEntityException;
 import com.devon.building.model.dto.AssignBuildingDTO;
 import com.devon.building.model.dto.BuildingDTO;
 import com.devon.building.model.dto.ResponseDTO;
@@ -23,10 +20,7 @@ import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,20 +79,7 @@ public class BuildingServiceImpl implements BuildingService {
     public BuildingEntity create(BuildingDTO buildingDTO) {
         BuildingEntity buildingEntity = buildingConvertor.toBuildingEntity(buildingDTO);
         entityManager.persist(buildingEntity);
-
-        List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
-        if (buildingDTO.getRentArea() != null && !buildingDTO.getRentArea().isEmpty()) {
-            String[] rentAreas = buildingDTO.getRentArea().split(",");
-            for (String val : rentAreas) {
-                if (!val.trim().isEmpty()) {
-                    RentAreaEntity rentAreaEntity = new RentAreaEntity();
-                    rentAreaEntity.setBuilding(buildingEntity);
-                    rentAreaEntity.setValue(Long.parseLong(val.trim()));
-                    rentAreaEntities.add(rentAreaEntity);
-                }
-            }
-        }
-        rentAreaRepository.saveAll(rentAreaEntities);
+        saveRentAreas(buildingDTO, buildingEntity);
         return buildingEntity;
     }
 
@@ -131,24 +112,28 @@ public class BuildingServiceImpl implements BuildingService {
         query.setParameter("id", storedBuilding.getId());
         query.executeUpdate();
 
+        saveRentAreas(buildingDTO, storedBuilding);
+        return storedBuilding;
+    }
+
+    private void saveRentAreas(BuildingDTO buildingDTO, BuildingEntity buildingEntity) {
         if (buildingDTO.getRentArea() != null && !buildingDTO.getRentArea().isEmpty()) {
             String[] rentAreas = buildingDTO.getRentArea().split(",");
             for (String val : rentAreas) {
                 if (!val.trim().isEmpty()) {
                     RentAreaEntity rentAreaEntity = new RentAreaEntity();
-                    rentAreaEntity.setBuilding(storedBuilding);
+                    rentAreaEntity.setBuilding(buildingEntity);
                     rentAreaEntity.setValue(Long.parseLong(val.trim()));
                     entityManager.persist(rentAreaEntity);
                 }
             }
         }
-        return storedBuilding;
     }
 
 
     @Override
     public BuildingDTO findById(Long id) {
-        BuildingEntity buildingEntity = buildingRepository.findById(id).orElseThrow(() -> new InvalidBuildingException("Building not found"));
+        BuildingEntity buildingEntity = buildingRepository.findById(id).orElseThrow(() -> new InvalidEntityException("Building not found"));
         BuildingDTO dto = modelMapper.map(buildingEntity, BuildingDTO.class);
         if (buildingEntity.getType() != null && !buildingEntity.getType().isEmpty()) {
             dto.setTypeCode(Arrays.asList(buildingEntity.getType().split(",")));
@@ -169,16 +154,19 @@ public class BuildingServiceImpl implements BuildingService {
 
         List<User> allStaff = userRepository.findByActiveAndUserRole(true, "ROLE_" + User.ROLE_EMPLOYEE);
 
-        // Lấy danh sách staff đang quản lý tòa nhà này
-        List<AssignmentBuildingEntity> assignments = assignmentBuildingRepository.findByBuildingId(id);
-
-        Set<Long> assignedStaffIds = assignments.stream()
+        Set<Long> assignedStaffIds = assignmentBuildingRepository.findByBuildingId(id).stream()
                 .map(AssignmentBuildingEntity::getStaffId)
                 .collect(Collectors.toSet());
 
-        //làm sao tìm kiếm tối ưu 1 list các user theo map
-        List<StaffResponseDTO> staffResponseDTOS = new ArrayList<>();
+        List<StaffResponseDTO> staffResponseDTOList = getStaffResponseDTOS(allStaff, assignedStaffIds);
 
+        responseDTO.setData(staffResponseDTOList);
+        responseDTO.setMessage("Load staffs successfully");
+        return responseDTO;
+    }
+
+    private List<StaffResponseDTO> getStaffResponseDTOS(List<User> allStaff, Set<Long> assignedStaffIds) {
+        List<StaffResponseDTO> staffResponseDTOList = new ArrayList<>();
         for (User user : allStaff) {
             StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
             staffResponseDTO.setId(user.getId());
@@ -187,28 +175,31 @@ public class BuildingServiceImpl implements BuildingService {
             if (assignedStaffIds.contains(user.getId())) {
                 staffResponseDTO.setChecked("checked");
             }
-            staffResponseDTOS.add(staffResponseDTO);
+            staffResponseDTOList.add(staffResponseDTO);
         }
-        responseDTO.setData(staffResponseDTOS);
-        responseDTO.setMessage("Load staffs Successfully");
-        return responseDTO;
+        return staffResponseDTOList;
     }
 
     @Override
     @Transactional
-    public void assignBuilding(AssignBuildingDTO dto) {
-        // Xóa tất cả assignment cũ của tòa nhà này
-        assignmentBuildingRepository.deleteByBuildingId(dto.getBuildingId());
+    public void assignBuilding(AssignBuildingDTO assignBuildingDTO) {
+        // Kiểm tra building tồn tại
+        buildingRepository.findById(assignBuildingDTO.getBuildingId())
+                .orElseThrow(() -> new InvalidEntityException("Building not found"));
 
-        // Tạo assignment mới cho các staff được chọn
-        if (dto.getStaffIds() != null && !dto.getStaffIds().isEmpty()) {
-            for (Long staffId : dto.getStaffIds()) {
-                AssignmentBuildingEntity assignment = new AssignmentBuildingEntity();
-                assignment.setBuildingId(dto.getBuildingId());
-                assignment.setStaffId(staffId);
-                assignmentBuildingRepository.save(assignment);
-            }
+        // Xóa tất cả assignment cũ của tòa nhà này
+        assignmentBuildingRepository.deleteByBuildingId(assignBuildingDTO.getBuildingId());
+        
+
+        List<AssignmentBuildingEntity> assignmentBuildings = new ArrayList<>();
+        for (Long staffId : assignBuildingDTO.getStaffIds()) {
+            AssignmentBuildingEntity assignmentBuilding = new AssignmentBuildingEntity();
+            assignmentBuilding.setBuildingId(assignBuildingDTO.getBuildingId());
+            assignmentBuilding.setStaffId(staffId);
+            assignmentBuildings.add(assignmentBuilding);
         }
+
+        assignmentBuildingRepository.saveAll(assignmentBuildings);
     }
 
 

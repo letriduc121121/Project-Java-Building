@@ -37,4 +37,5 @@ public class RentAreaEntity {
     @ManyToOne
     @JoinColumn(name = "buildingid")
     private BuildingEntity building;
+    
 }

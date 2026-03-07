@@ -9,6 +9,7 @@ import com.devon.building.entity.BuildingEntity;
 import com.devon.building.repository.custom.BuildingRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 import jakarta.persistence.Query;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Primary
 public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
-    @PersistenceContext
+    @PersistenceContext(type= PersistenceContextType.TRANSACTION)
     private EntityManager entityManager;
 
     @Override

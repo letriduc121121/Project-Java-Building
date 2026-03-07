@@ -16,7 +16,6 @@ import java.util.List;
 public class AssignBuildingDTO {
     @NotNull(message = "Building Id is required")
     private Long buildingId;
-    @Size(min=1,message = "")
     private List<Long> staffIds;
 
 }

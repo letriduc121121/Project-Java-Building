@@ -1,14 +1,12 @@
 package com.devon.building.convert;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.devon.building.entity.BuildingEntity;
 import com.devon.building.entity.RentAreaEntity;
 import com.devon.building.enums.District;
-import com.devon.building.exception.InvalidBuildingException;
-import com.devon.building.model.request.BuildingSearchRequest;
+import com.devon.building.exception.InvalidEntityException;
 import com.devon.building.model.response.BuildingSearchResponse;
 import com.devon.building.model.dto.BuildingDTO;
 import jakarta.persistence.EntityManager;
@@ -63,7 +61,7 @@ public class BuildingConvertor {
         if (buildingDTO.getId() != null) {
             buildingEntity = entityManager.find(BuildingEntity.class, buildingDTO.getId());
             if (buildingEntity == null) {
-                throw new InvalidBuildingException("Building not found with ID: " + buildingDTO.getId());
+                throw new InvalidEntityException("Building not found with ID: " + buildingDTO.getId());
             }
         } else {
             buildingEntity = new BuildingEntity();
