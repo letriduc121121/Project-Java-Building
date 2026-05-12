@@ -6,11 +6,12 @@ import com.devon.building.model.dto.BuildingDTO;
 import com.devon.building.model.dto.ResponseDTO;
 import com.devon.building.model.request.BuildingSearchRequest;
 import com.devon.building.model.response.BuildingSearchResponse;
+import com.devon.building.pagination.PaginationResult;
 
 import java.util.List;
 
 public interface BuildingService {
-    List<BuildingSearchResponse> searchBuildings(BuildingSearchRequest request);
+    PaginationResult<BuildingSearchResponse> searchBuildings(BuildingSearchRequest request, int page, int maxResult, int maxNavigationPage);
 
     void delete(List<Long> ids);
 

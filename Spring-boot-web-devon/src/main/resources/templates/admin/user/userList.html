@@ -99,7 +99,7 @@
                                                 title="Thêm người dùng">
                                                 <i class="fas fa-plus-circle fa-lg orange"></i>
                                             </a>
-                                            <button id="btnDelete" class="btn btn-white btn-primary btn-bold"
+                                            <button sec:authorize="hasRole('MANAGER')" id="btnDelete" class="btn btn-white btn-primary btn-bold"
                                                 onclick="warningBeforeDelete()" title="Xóa người dùng">
                                                 <i class="fas fa-trash fa-lg red"></i>
                                             </button>

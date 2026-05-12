@@ -545,6 +545,24 @@
                                                     </span>
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">Image</label>
+
+                                                <div class="col-sm-5 text-center">
+                                                    <img id="avatar" alt="avatar"
+                                                        th:src="@{|/admin/buildings/buildingImage?id=${building.id}|}"
+                                                        class="img-thumbnail" style="max-width: 150px;">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right">Upload
+                                                    Image</label>
+                                                <div class="col-sm-5 text-center">
+                                                    <input type="file" class="form-control-file"
+                                                        id="exampleFormControlFile1" name="fileData">
+                                                </div>
+                                            </div>
 
 
                                             <div class="form-actions center">
@@ -650,7 +668,7 @@
         }
 
 
-        $("#btnAddBuilding").click(function (e) {
+        $("#btnAddBuilding").click(async function (e) {
             e.preventDefault();
             const json = {};
             const typeCodes = [];
@@ -665,11 +683,23 @@
             });
 
             json["typeCode"] = typeCodes;
+
             // Validate dữ liệu
             if (!validateData(json)) {
                 return;
             }
-
+            $('#avatar').show();
+            const fileInput = $('#exampleFormControlFile1')[0].files[0];
+            if (fileInput) {
+                try {
+                    json.imageBase64 = await toBase64(fileInput);
+                    json.imageName = fileInput.name;
+                } catch (error) {
+                    console.error(error);
+                    alert("Lỗi đọc file ảnh");
+                    return;
+                }
+            }
             // Loại bỏ các trường rỗng (tránh lỗi "Incorrect decimal value" khi update database)
             const cleanedJson = {};
             for (let key in json) {
@@ -690,7 +720,12 @@
                 addBuilding(cleanedJson);
             }
         });
-
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
         // Send data to server by AJAX
         function addBuilding(json) {
             $.ajax({
@@ -719,6 +754,30 @@
                 },
             });
         }
+        let imageBase64 = '';
+        let imageName = '';
+
+        $('#exampleFormControlFile1').change(function (event) {
+            event.preventDefault();
+            const reader = new FileReader();
+            const file = $(this)[0].files[0];
+            reader.onload = function (e) {
+                imageBase64 = e.target.result;
+                imageName = file.name.replace(/\s+/g, '-').toLowerCase();
+            };
+            reader.readAsDataURL(file);
+            openImage(this, "avatar");
+        });
+
+        function openImage(input, imageView) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#' + imageView).attr('src', reader.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
         function updateBuilding(json) {
             $.ajax({
@@ -743,6 +802,7 @@
                     }
                 },
             });
+
         }
     </script>
 </body>

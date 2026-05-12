@@ -36,7 +36,7 @@
 
                     <!-- Form -->
                     <form id="registerForm"
-                          th:action="@{/api/user/register}"
+                          th:action="@{/api/users/register}"
                           method="post">
 
                         <!-- Full Name -->
@@ -200,10 +200,10 @@
         }
 
         const formData = {
-            fullName: fullName,
-            username: username,
+            fullname: fullName,
+            userName: username,
             password: password,
-            confirmPassword: confirmPassword
+            retype_password: confirmPassword
         };
 
         // Add loading effect to register button
@@ -212,7 +212,7 @@
         registerBtn.disabled = true;
 
         // Send AJAX request
-        fetch('/api/user/register', {
+        fetch('/api/users/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -229,7 +229,7 @@
             })
             .then(data => {
                 alert('Đăng ký thành công. Vui lòng đăng nhập.');
-                window.location.href = '/login';
+                window.location.href = '/admin/login';
             })
             .catch(error => {
                 var message = "Đăng ký thất bại!";

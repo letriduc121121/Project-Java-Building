@@ -64,9 +64,19 @@ public class MainController {
         return "/403";
     }
 
+    @RequestMapping("/404")
+    public String notFound() {
+        return "/404";
+    }
+
     @RequestMapping("/")
     public String home() {
         return "index";
+    }
+
+    @RequestMapping("/contact")
+    public String contact() {
+        return "contact";
     }
 
 

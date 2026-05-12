@@ -6,6 +6,9 @@ import com.devon.building.model.dto.UserDTO;
 import com.devon.building.pagination.PaginationResult;
 import com.devon.building.repository.UserRepository;
 import com.devon.building.service.UserService;
+import com.devon.building.utils.JwtTokenUtils;
+import com.devon.building.utils.LocalizationUtils;
+import com.devon.building.utils.MessageKeys;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Base64;
 
 @Service
 @Transactional
@@ -23,108 +27,179 @@ public class UserServiceImpl implements UserService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final LocalizationUtils localizationUtils;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserServiceImpl(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            LocalizationUtils localizationUtils) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.localizationUtils = localizationUtils;
+    }
 
+    // ================= AUTH METHODS =================
     @Override
-    public PaginationResult<User> listUserInfo(String key, int page, int maxResult, int maxNavigationPage) {
-        StringBuilder sql = new StringBuilder("SELECT NEW " + User.class.getName() + "(u.id, u.userName, u.active, u.userRole, u.fullName, u.phone) " + "FROM " + User.class.getName() + " u ");
-        StringBuilder countSql = new StringBuilder("SELECT COUNT(u.id) FROM " + User.class.getName() + " u ");
-
-        if (key != null && !key.trim().isEmpty()) {
-            sql.append("WHERE (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key) ");
-            countSql.append("WHERE (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key) ");
+    @Transactional
+    public User createUser(UserDTO userDTO) throws Exception {
+        String userName = userDTO.getUserName();
+        if(userRepository.existsByUserName(userName)) {
+            throw new RuntimeException("Username already exists");
         }
 
-        sql.append("ORDER BY u.userName DESC");
+        // Đăng ký mặc định luôn là ROLE_USER
+        String roleStr = "ROLE_USER";
+        
+        // tranh error DB do phone not null
+        String phone = userDTO.getPhoneNumber() != null ? userDTO.getPhoneNumber() : "";
+
+        User newUser = User.builder()
+                .fullName(userDTO.getFullName())
+                .userName(userDTO.getUserName())
+                .phone(phone)
+                .active(true)
+                .userRole(roleStr)
+                .build();
+
+        String password = userDTO.getPassword();
+        String encodedPassword = passwordEncoder.encode(password);
+        newUser.setEncrytedPassword(encodedPassword);
+        return userRepository.save(newUser);
+    }
+
+    // ================= LIST =================
+    @Override
+    public PaginationResult<User> listUserInfo(String key, int page, int maxResult, int maxNavigationPage) {
+
+        String baseQuery = " FROM " + User.class.getName() + " u WHERE u.active = true ";
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT NEW " + User.class.getName() +
+                        "(u.id, u.userName, u.active, u.userRole, u.fullName, u.phone) "
+        ).append(baseQuery);
+
+        StringBuilder countSql = new StringBuilder("SELECT COUNT(u.id)").append(baseQuery);
+
+        if (isNotEmpty(key)) {
+            sql.append(" AND (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key)");
+            countSql.append(" AND (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key)");
+        }
+
+        sql.append(" ORDER BY u.userName DESC");
 
         TypedQuery<User> query = entityManager.createQuery(sql.toString(), User.class);
         TypedQuery<Long> countQuery = entityManager.createQuery(countSql.toString(), Long.class);
 
-        if (key != null && !key.trim().isEmpty()) {
+        if (isNotEmpty(key)) {
             String searchKey = "%" + key.toLowerCase() + "%";
             query.setParameter("key", searchKey);
             countQuery.setParameter("key", searchKey);
         }
+
         return new PaginationResult<>(query, countQuery, page, maxResult, maxNavigationPage);
     }
 
+    // ================= SAVE =================
     @Override
     public void save(UserDTO userDTO) {
+
         String userName = userDTO.getUserName();
-        User user = null;
-        if (userName != null && !userName.isEmpty()) {
-            user = userRepository.findByUserName(userName);
-        }
-        if (user != null) {
+
+        if (userRepository.findByUserName(userName) != null) {
             throw new EntityExistsException("User with name " + userName + " already exists");
         }
-        user = new User();
+
+        User user = new User();
         user.setUserName(userName);
         user.setActive(true);
         user.setFullName(userDTO.getFullName());
         user.setEncrytedPassword(passwordEncoder.encode(SystemConstant.PASSWORD_DEFAULT));
-        user.setUserRole(User.ROLE_MANAGER);
-        if (userDTO.getFileData() != null) {
-            byte[] image = null;
-            try {
-                image = userDTO.getFileData().getBytes();
-            } catch (IOException e) {
-                throw new RuntimeException("Invalid image data", e);
-            }
-            if (image != null && image.length > 0) {
-                user.setImage(image);
-            }
-        }
+        user.setUserRole("ROLE_" + User.ROLE_MANAGER);
+
+        convertToByte(userDTO, user);
+
         entityManager.persist(user);
         entityManager.flush();
     }
 
+    // ================= UPDATE =================
     @Override
     public void update(UserDTO userDTO) {
+
         String userName = userDTO.getUserName();
-        User user = null;
-        if (userName != null && !userName.isEmpty()) {
-            user = userRepository.findByUserName(userName);
-        }
+        User user = userRepository.findByUserName(userName);
+
         if (user == null) {
-            throw new EntityNotFoundException("Entity with name " + userName + " not found");
+            throw new EntityNotFoundException("User " + userName + " not found");
         }
+
         user.setUserName(userName);
         user.setActive(true);
         user.setUserRole(userDTO.getRoleCode());
+
+        convertToByte(userDTO, user);
+
+        userRepository.save(user);
+    }
+
+    // ================= DELETE =================
+    @Override
+    public void delete(List<Long> ids) {
+        ids.forEach(id -> userRepository.findById(id)
+                .ifPresent(user -> user.setActive(false)));
+        userRepository.flush();
+    }
+
+    // ================= GET STAFF =================
+    @Override
+    public Map<Long, String> getAllStaff() {
+        return userRepository
+                .findByActiveAndUserRole(true, "ROLE_" + User.ROLE_EMPLOYEE)
+                .stream()
+                .collect(Collectors.toMap(User::getId, User::getFullName));
+    }
+
+    @Override
+    public User getUserByUserName(String  userName) {
+        return userRepository.findByUserName(userName);
+
+    }
+
+    // ================= HELPER =================
+
+    private void convertToByte(UserDTO userDTO, User user) {
         try {
-            if (userDTO.getBase64Image() != null && !userDTO.getBase64Image().isEmpty()) {
+            // 1. Upload file (ưu tiên)
+            if (userDTO.getFileData() != null && !userDTO.getFileData().isEmpty()) {
+                byte[] image = userDTO.getFileData().getBytes();
+                user.setImage(image);
+                return;
+            }
+
+            // 2. Base64
+            if (isNotEmpty(userDTO.getBase64Image())) {
                 String base64String = userDTO.getBase64Image();
+
                 if (base64String.contains(",")) {
                     base64String = base64String.split(",")[1];
                 }
 
                 byte[] imageBytes = Base64.getDecoder().decode(base64String);
                 user.setImage(imageBytes);
+                return;
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid image data", e);
-        }
-        userRepository.save(user);
-    }
 
-    @Override
-    public void delete(List<Long> ids) {
-        for (Long id : ids) {
-            Optional<User> user = userRepository.findById(id);
-            user.ifPresent(value -> value.setActive(false));
-            userRepository.flush();
+            // 3. Không có gì → giữ nguyên (KHÔNG set null)
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Invalid image data", e);
         }
     }
 
-    @Override
-    public Map<Long, String> getAllStaff() {
-        List<User> users = userRepository.findByActiveAndUserRole(true, "ROLE_"+User.ROLE_EMPLOYEE);
-        Map<Long, String> staff = users.stream().collect(Collectors.toMap(User::getId,User::getFullName));
-        return staff;
+    private boolean isNotEmpty(String str) {
+        return str != null && !str.trim().isEmpty();
     }
 }

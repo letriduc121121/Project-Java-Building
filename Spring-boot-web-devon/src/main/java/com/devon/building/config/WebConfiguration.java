@@ -23,5 +23,11 @@ public class WebConfiguration implements WebMvcConfigurer{
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-  
+
+    @Bean
+    public org.springframework.web.servlet.LocaleResolver localeResolver() {
+        org.springframework.web.servlet.i18n.CookieLocaleResolver localeResolver = new org.springframework.web.servlet.i18n.CookieLocaleResolver();
+        localeResolver.setDefaultLocale(new java.util.Locale("vi"));
+        return localeResolver;
+    }
 }

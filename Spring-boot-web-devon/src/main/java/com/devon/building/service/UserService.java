@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-    PaginationResult<User> listUserInfo(String key,int page, int maxResult, int maxNavigationPage);
+    PaginationResult<User> listUserInfo(String key, int page, int maxResult, int maxNavigationPage);
 
     void save(UserDTO userDTO);
 
@@ -16,5 +16,9 @@ public interface UserService {
 
     void delete(List<Long> ids);
 
-    Map<Long,String> getAllStaff();
+    Map<Long, String> getAllStaff();
+
+    User getUserByUserName(String userName);
+
+    User createUser(UserDTO userDTO) throws Exception;
 }

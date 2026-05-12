@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Estate Building</title>
+    <th:block th:replace="~{admin/common/header :: header}"></th:block>
+</head>
+
+<body class="no-skin" style="font-family: 'Abel', sans-serif;">
+    <th:block th:replace="~{admin/common/menu :: menu}"></th:block>
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try { ace.settings.check('main-container', 'fixed') } catch (e) { }
+        </script>
+        <th:block th:replace="~{admin/common/sidebar :: sidebar}"></th:block>
+
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li><i class="ace-icon fa fa-home home-icon"></i><a href="#">Home</a></li>
+                        <li><a th:href="@{/admin/customers/list}">Quản lý khách hàng</a></li>
+                        <li class="active" th:text="${customerEdit.id != null} ? 'Sửa khách hàng' : 'Thêm khách hàng'">
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="page-content">
+                    <div class="page-header">
+                        <h1
+                            th:text="${customerEdit.id != null} ? 'Sửa thông tin khách hàng' : 'Thêm thông tin khách hàng'">
+                        </h1>
+                    </div>
+
+                    <!-- Form thông tin khách hàng (dùng chung cho thêm và sửa) -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="widget-box">
+                                <div class="widget-header">
+                                    <h4 class="widget-title"
+                                        th:text="${customerEdit.id != null} ? 'Chỉnh sửa khách hàng' : 'Thêm khách hàng mới'">
+                                    </h4>
+                                </div>
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <form id="form-edit" class="form-horizontal">
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="fullName">Họ
+                                                    tên</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="fullName" name="fullName"
+                                                        type="text" placeholder="Nhập họ tên"
+                                                        th:value="${customerEdit.fullName}" />
+                                                    <span id="noFullName" style="display:none; color:red">Vui lòng nhập
+                                                        họ tên</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="phone">Số
+                                                    điện thoại</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="phone" name="phone" type="text"
+                                                        placeholder="Nhập số điện thoại"
+                                                        th:value="${customerEdit.phone}" />
+                                                    <span id="noPhone" style="display:none; color:red">Vui lòng nhập số
+                                                        điện thoại</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="email">Email</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="email" name="email" type="email"
+                                                        placeholder="Nhập email" th:value="${customerEdit.email}" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="companyName">Tên công ty</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="companyName" name="companyName"
+                                                        type="text" placeholder="Nhập tên công ty"
+                                                        th:value="${customerEdit.companyName}" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right" for="demand">Nhu
+                                                    cầu</label>
+                                                <div class="col-sm-6">
+                                                    <input class="form-control" id="demand" name="demand" type="text"
+                                                        placeholder="Nhập nhu cầu" th:value="${customerEdit.demand}" />
+                                                    <span id="noDemand" style="display:none; color:red">Vui lòng nhập
+                                                        nhu cầu</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label no-padding-right"
+                                                    for="status">Trạng thái</label>
+                                                <div class="col-sm-6">
+                                                    <select class="form-control" id="status" name="status">
+                                                        <option value="">---Chọn trạng thái---</option>
+                                                        <option th:each="item : ${statuses}" th:value="${item.key}"
+                                                            th:text="${item.value}"
+                                                            th:selected="${item.key == customerEdit.status}">
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-actions center">
+                                                <a th:href="@{/admin/customers/list}">
+                                                    <button class="btn btn-sm btn-danger" type="button">
+                                                        <i class="ace-icon glyphicon glyphicon-remove"></i>
+                                                        Hủy thao tác
+                                                    </button>
+                                                </a>
+                                                <button class="btn btn-sm btn-success" id="btnAddCustomer" type="button"
+                                                    th:text="${customerEdit.id != null} ? 'Cập nhật thông tin' : 'Thêm khách hàng'">
+                                                </button>
+                                            </div>
+
+                                            <input type="hidden" id="id" name="id" th:value="${customerEdit.id}" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hr hr-18 dotted hr-double"></div>
+
+                    <!-- Bảng giao dịch — chỉ hiển thị khi đang sửa (có id) -->
+                    <div th:if="${customerEdit.id != null}">
+                        <div th:each="item : ${transactionType}">
+                            <div class="col-xs-12">
+                                <h2 class="smaller lighter blue">
+                                    <span th:text="${item.value}"></span>
+                                    <button class="btn btn-md btn-success pull-right" th:data-type="${item.key}"
+                                        th:data-customer-id="${customerEdit.id}"
+                                        onclick="addTransaction(this.dataset.type, this.dataset.customerId)">
+                                        <i class="ace-icon glyphicon glyphicon-plus smaller-80"></i> Thêm giao dịch
+                                    </button>
+                                </h2>
+                                <div class="hr hr-16 dotted hr-dotted"></div>
+                            </div>
+
+                            <div th:if="${item.key == 'CSKH'}">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Người tạo</th>
+                                                    <th>Ngày sửa</th>
+                                                    <th>Người sửa</th>
+                                                    <th>Chi tiết giao dịch</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="transaction : ${CSKH}">
+                                                    <td th:text="${transaction.createdDate}"></td>
+                                                    <td th:text="${transaction.createdBy}"></td>
+                                                    <td th:text="${transaction.modifiedDate}"></td>
+                                                    <td th:text="${transaction.modifiedBy}"></td>
+                                                    <td th:text="${transaction.note}"></td>
+                                                    <td>
+                                                        <a class="btn btn-xs btn-info" title="Sửa"
+                                                            th:data-id="${transaction.id}"
+                                                            th:data-code="${transaction.code}"
+                                                            th:data-customer-id="${customerEdit.id}"
+                                                            th:data-note="${transaction.note}"
+                                                            onclick="editTransaction(this.dataset.id, this.dataset.code, this.dataset.customerId, this.dataset.note)">
+                                                            <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                        </a>
+                                                        <button sec:authorize="hasRole('MANAGER')"
+                                                            class="btn btn-xs btn-danger" title="Xóa"
+                                                            th:data-id="${transaction.id}"
+                                                            onclick="deleteTransaction(this.dataset.id)">
+                                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:if="${item.key == 'DDX'}">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <table class="table table-striped table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Người tạo</th>
+                                                    <th>Ngày sửa</th>
+                                                    <th>Người sửa</th>
+                                                    <th>Chi tiết giao dịch</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="transaction : ${DDX}">
+                                                    <td th:text="${transaction.createdDate}"></td>
+                                                    <td th:text="${transaction.createdBy}"></td>
+                                                    <td th:text="${transaction.modifiedDate}"></td>
+                                                    <td th:text="${transaction.modifiedBy}"></td>
+                                                    <td th:text="${transaction.note}"></td>
+                                                    <td>
+                                                        <a class="btn btn-xs btn-info" title="Sửa"
+                                                            th:data-id="${transaction.id}"
+                                                            th:data-code="${transaction.code}"
+                                                            th:data-customer-id="${customerEdit.id}"
+                                                            th:data-note="${transaction.note}"
+                                                            onclick="editTransaction(this.dataset.id, this.dataset.code, this.dataset.customerId, this.dataset.note)">
+                                                            <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                        </a>
+                                                        <button sec:authorize="hasRole('MANAGER')"
+                                                            class="btn btn-xs btn-danger" title="Xóa"
+                                                            th:data-id="${transaction.id}"
+                                                            onclick="deleteTransaction(this.dataset.id)">
+                                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Giao dịch -->
+        <div id="transactionModal" class="modal fade" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Giao dịch</h5>
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="transactionId" />
+                        <input type="hidden" id="transactionType" />
+                        <input type="hidden" id="customerId" />
+                        <div class="form-group">
+                            <label>Chi tiết giao dịch</label>
+                            <textarea class="form-control" id="transactionNote" rows="4"
+                                placeholder="Nhập chi tiết..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" onclick="submitTransaction()">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <th:block th:replace="~{admin/common/footer :: footer}"></th:block>
+    </div>
+
+    <th:block th:replace="~{admin/common/common-scripts :: jquery}"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function validateCustomer(json) {
+            let ok = 1;
+            $('.error-message').remove();
+            if (!json['fullName']) {
+                ok = 0;
+                $('#fullName').after('<span class="error-message" style="color:red"> Tên khách hàng không được trống</span>');
+            }
+            if (!json['phone']) {
+                ok = 0;
+                $('#phone').after('<span class="error-message" style="color:red"> Số điện thoại không được trống</span>');
+            }
+            if (!json['demand']) {
+                ok = 0;
+                $('#demand').after('<span class="error-message" style="color:red"> Nhu cầu không được trống</span>');
+            }
+            return ok;
+        }
+
+        $('#btnAddCustomer').click(function (e) {
+            e.preventDefault();
+            const json = {};
+            $.each($('#form-edit').serializeArray(), function (i, it) {
+                json[it.name] = it.value;
+            });
+            if (validateCustomer(json) === 0) return;
+
+            if (!json['id']) {
+                addCustomer(json);
+            } else {
+                updateCustomer(json);
+            }
+        });
+
+        function addCustomer(json) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/api/customers",
+                data: JSON.stringify(json),
+                contentType: "application/json",
+                success: function (response) {
+                    alert(response.message);
+                    window.location.href = "/admin/customers/list";
+                },
+                error: function (response) {
+                    try {
+                        const err = JSON.parse(response.responseText);
+                        alert(err.detail ? err.detail.join('\n') : err.message);
+                    } catch (e) {
+                        alert(response.responseText);
+                    }
+                }
+            });
+        }
+
+        function updateCustomer(json) {
+            $.ajax({
+                type: "PUT",
+                url: "/admin/api/customers",
+                data: JSON.stringify(json),
+                contentType: "application/json",
+                success: function (response) {
+                    alert(response.message);
+                    window.location.href = "/admin/customers/list";
+                },
+                error: function (response) {
+                    try {
+                        alert(response.responseJSON.detail.join('\n'));
+                    } catch (e) {
+                        alert("Cập nhật thất bại!");
+                    }
+                }
+            });
+        }
+
+        function addTransaction(type, customerId) {
+            $('#transactionId').val('');
+            $('#transactionType').val(type);
+            $('#customerId').val(customerId);
+            $('#transactionNote').val('');
+            $('#transactionModal .modal-title').text('Thêm giao dịch');
+            $('#transactionModal').modal('show');
+        }
+
+        function editTransaction(id, code, customerId, note) {
+            $('#transactionId').val(id);
+            $('#transactionType').val(code);
+            $('#customerId').val(customerId);
+            $('#transactionNote').val(note);
+            $('#transactionModal .modal-title').text('Cập nhật giao dịch');
+            $('#transactionModal').modal('show');
+        }
+
+        function submitTransaction() {
+            const idStr = $('#transactionId').val();
+            const note = $('#transactionNote').val();
+            if (!note) { alert('Vui lòng nhập chi tiết giao dịch!'); return; }
+
+            const data = {
+                id: idStr ? parseInt(idStr) : null,
+                customerId: parseInt($('#customerId').val()),
+                code: $('#transactionType').val(),
+                note: note
+            };
+
+            $.ajax({
+                type: idStr ? "PUT" : "POST",
+                url: "/admin/api/transactions",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    $('#transactionModal').modal('hide');
+                    alert(idStr ? "Cập nhật giao dịch thành công!" : "Thêm giao dịch thành công!");
+                    location.reload();
+                },
+                error: function () {
+                    alert(idStr ? "Lỗi khi cập nhật giao dịch!" : "Lỗi khi thêm giao dịch!");
+                }
+            });
+        }
+
+        function deleteTransaction(id) {
+            Swal.fire({
+                title: "Bạn chắc chắn muốn xóa?",
+                text: "Không thể hoàn tác hành động này!",
+                icon: "warning",
+                showCancelButton: true,
+                customClass: { confirmButton: 'btn btn-danger', cancelButton: 'btn btn-primary' },
+                confirmButtonText: "Xóa",
+                cancelButtonText: "Hủy"
+            }).then(function (res) {
+                if (res.value) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/admin/api/transactions/" + id,
+                        success: function () {
+                            Swal.fire({ icon: 'success', title: 'Đã xóa thành công' })
+                                .then(() => location.reload());
+                        },
+                        error: function () {
+                            Swal.fire({ icon: 'error', title: 'Lỗi khi xóa giao dịch!' });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

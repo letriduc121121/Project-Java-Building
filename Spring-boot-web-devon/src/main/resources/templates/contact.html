@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Estate Building</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+    <link rel="icon" th:href="@{/}" type="image/x-icon">
+    <th:block th:include="_header"></th:block>
+</head>
+<body class="no-skin" style="font-family: 'Abel', sans-serif;">
+<th:block th:include="_menu"></th:block>
+<div class="page-wrapper">
+    <div class="intro text-center mb-5">
+        <div class="title-page">Liên hệ</div>
+        <div class="row">
+            <div class="col-xs-12 a-left">
+                <ul class="desc-intro">
+                    <li class="home">
+                        <a th:href="@{/}"><span style="color:#fff">Trang chủ</span></a>
+                        <span class="mx-1" style="color:#fff"> / </span>
+                    </li>
+                    <li class="intro-item"><span>Liên hệ</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="box-lienhe mt-5 mb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <h2 class="title-lienhe"><strong>Công ty cổ phần bất động sản SkyLand</strong></h2>
+                    <div class="desc-lienhe">
+                        <p>Được thành lập vào ngày 01/01/2020 với niềm đam mê và khát vọng thành công trong lĩnh vực
+                            bất động sản. Nhờ chiến lược rõ ràng và hướng đi đúng, SkyLand đã nhanh chóng phát triển
+                            và đạt được những thành công nhất định.</p>
+                        <ul class="margin-bottom-15 link" style="list-style-type: none;">
+                            <li>
+                                <span class="block_fonticon"><i class="fa fa-map-marker icon-lienhe"></i></span>
+                                <span class="title-li"> Khu CNC Hòa Lạc, Thạch Thất, Hà Nội</span>
+                            </li>
+                            <li>
+                                <span class="block_fonticon"><i class="fa fa-mobile icon-lienhe"></i></span>
+                                <span class="title-li">
+                                    Hotline: <a style="color: #434a6e;" class="fone" href="">0345004500</a>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="block_fonticon"><i class="fa fa-envelope icon-lienhe"></i></span>
+                                <span class="title-li">Email: <a style="color: #434a6e;"
+                                                                 href="">skyland@gmail.com</a></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <h2 class="title-lienhe"><strong>Liên hệ với chúng tôi</strong></h2>
+                    <form id="contactForm" class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" placeholder="Họ và tên *" name="fullName">
+                                <small class="text-danger" id="error-fullName"></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <input type="email" class="form-control" placeholder="Email *" name="email">
+                                <small class="text-danger" id="error-email"></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <input type="text" class="form-control" placeholder="Số điện thoại *"
+                                       name="customerPhone">
+                                <small class="text-danger" id="error-customerPhone"></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <textarea class="form-control" placeholder="Nhu cầu / Tin nhắn" name="demand" rows="4"></textarea>
+                                <small class="text-danger" id="error-demand"></small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12 text-right">
+                                <button type="submit" class="btn btn-primary px-5">
+                                    Gửi liên hệ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT  -->
+    <div class="map mb-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="google-map margin-bottom-30">
+                        <div class="maps_iframe">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10943.848976195668!2d105.51994868282964!3d21.01252561722872!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abc60e7d3f19%3A0x2be9d7d0b5abcbf4!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBGUFQgSMOgIE7hu5lp!5e0!3m2!1svi!2s!4v1751197402710!5m2!1svi!2s"
+                                    width="600"
+                                    height="450"
+                                    style="width:100%; border:0;"
+                                    allowfullscreen
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<th:block th:insert="~{_footer :: footer}"></th:block>
+
+<script th:inline="javascript">
+    $('#contactForm').submit(function (e) {
+        e.preventDefault();
+
+        $('.text-danger').text('');
+
+        var data = {};
+        $.each($('#contactForm').serializeArray(), function (i, v) {
+            data[v.name] = v.value ? v.value.trim() : '';
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/api/contact",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (response) {
+                alert(response);
+                $('#contactForm')[0].reset();
+            },
+            error: function (xhr) {
+                if (xhr.responseText) {
+                    var serverMessage = xhr.responseText;
+                    if (serverMessage.toLowerCase().includes("họ tên")) {
+                        $('#error-fullName').text(serverMessage);
+                    } else if (serverMessage.toLowerCase().includes("email")) {
+                        $('#error-email').text(serverMessage);
+                    } else if (serverMessage.toLowerCase().includes("số điện thoại")) {
+                        $('#error-customerPhone').text(serverMessage);
+                    } else if (serverMessage.toLowerCase().includes("tin nhắn") || serverMessage.toLowerCase().includes("nhu cầu")) {
+                        $('#error-demand').text(serverMessage);
+                    } else {
+                        alert(serverMessage);
+                    }
+                    return;
+                }
+                alert("Gửi liên hệ thất bại. Vui lòng thử lại sau.");
+            }
+        });
+    });
+</script>
+</body>
+</html>

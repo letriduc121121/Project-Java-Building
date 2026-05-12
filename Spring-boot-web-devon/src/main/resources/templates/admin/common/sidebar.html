@@ -1,5 +1,6 @@
 <div th:fragment="sidebar" id="sidebar" class="sidebar responsive ace-save-state"
-     data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true" xmlns:th="http://www.thymeleaf.org">
+     data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true" xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
     <div class="sidebar-shortcuts">
         <div class="sidebar-shortcuts-large">
             <a th:href="@{/}">
@@ -30,7 +31,7 @@
         </li>
     </ul>
 
-    <ul class="nav nav-list">
+    <ul class="nav nav-list" sec:authorize="hasRole('MANAGER')">
         <li class="">
             <a href="#" class="dropdown-toggle">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -64,7 +65,7 @@
             <b class="arrow"></b>
             <ul class="submenu">
                 <li class="">
-                    <a href="#">
+                    <a href="/admin/customers/list">
                         <i class="menu-icon fa fa-caret-right"></i>
                         Danh sách khách hàng
                     </a>

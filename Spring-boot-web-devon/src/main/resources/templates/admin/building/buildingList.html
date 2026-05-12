@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8" />
@@ -69,6 +70,8 @@
                                     <div class="widget-main">
                                         <form class="form-horizontal" id="building-search-form" method="get"
                                             th:action="@{/admin/buildings/list}" th:object="${modelSearch}">
+                                            <input type="hidden" id="page" name="page"
+                                                th:value="${resultBuilding.currentPage}" />
                                             <div class="row">
                                                 <div class="form-group">
                                                     <div class="col-xs-12">
@@ -177,7 +180,7 @@
                                                                 name="managerPhone"
                                                                 th:value="${modelSearch.managerPhone}" type="number" />
                                                         </div>
-                                                        <div class="col-xs-2">
+                                                        <div class="col-xs-2" sec:authorize="hasRole('MANAGER')">
                                                             <label for="staffId"> Chọn nhân viên </label>
                                                             <select class="form-control" id="staffId" name="staffId">
                                                                 <option value="">Chọn Nhân Viên</option>
@@ -235,17 +238,19 @@
                                         </svg>
                                     </button>
                                 </a>
-                                <button class="btn btn-app btn-danger btn-xs" id="deleteBuildings" title="Xóa tòa nhà">
-                                    <svg class="bi bi-building-dash" fill="currentColor" height="20" viewBox="0 0 16 16"
-                                        width="20" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1" />
-                                        <path
-                                            d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z" />
-                                        <path
-                                            d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
-                                    </svg>
-                                </button>
+                               <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+                                   <button class="btn btn-app btn-danger btn-xs" id="deleteBuildings" title="Xóa tòa nhà">
+                                       <svg class="bi bi-building-dash" fill="currentColor" height="20" viewBox="0 0 16 16"
+                                            width="20" xmlns="http://www.w3.org/2000/svg">
+                                           <path
+                                                   d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1" />
+                                           <path
+                                                   d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6.5a.5.5 0 0 1-1 0V1H3v14h3v-2.5a.5.5 0 0 1 .5-.5H8v4H3a1 1 0 0 1-1-1z" />
+                                           <path
+                                                   d="M4.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm-6 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
+                                       </svg>
+                                   </button>
+                               </th:block>
                             </div>
                         </div>
                         <!-- /.span -->
@@ -279,7 +284,7 @@
                                 </thead>
 
                                 <tbody>
-                                    <tr th:each="building: ${resultBuilding}">
+                                    <tr th:each="building: ${resultBuilding.list}">
                                         <td class="center">
                                             <label class="pos-rel" th:for="'building_' + ${building.id}">
                                                 <input class="ace" th:id="'building_' + ${building.id}"
@@ -302,27 +307,54 @@
 
                                         <td>
                                             <div class="hidden-sm hidden-xs btn-group">
-                                                <button class="btn btn-xs btn-success" data-toggle="modal"
-                                                    th:onclick="'assignmentBuilding('+${building.id}+')'">
-                                                    <i class="ace-icon fa fa-users"></i>
-                                                </button>
+
+                                                <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+                                                    <button class="btn btn-xs btn-success"
+                                                            th:attr="onclick=|assignmentBuilding(${building.id})|">
+                                                        <i class="ace-icon fa fa-users"></i>
+                                                    </button>
+                                                </th:block>
 
                                                 <a class="btn btn-xs btn-info"
-                                                    th:href="@{|/admin/buildings/update/${building.id}|}">
+                                                   th:href="@{|/admin/buildings/update/${building.id}|}">
                                                     <i class="ace-icon fas fa-pencil-alt bigger-120"></i>
                                                 </a>
 
-                                                <button class="btn btn-xs btn-danger" id="deleteBuilding1"
-                                                    th:onclick="'deleteBuilding('+${building.id}+')'">
-                                                    <i class="ace-icon fas fa-trash bigger-120"></i>
-                                                </button>
+                                                <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+                                                    <button class="btn btn-xs btn-danger"
+                                                            th:id="'deleteBuilding_' + ${building.id}"
+                                                            th:attr="onclick=|deleteBuilding(${building.id})|">
+                                                        <i class="ace-icon fas fa-trash bigger-120"></i>
+                                                    </button>
+                                                </th:block>
+
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <!-- Thanh phân trang nằm trong col-xs-12 để căn giữa đúng -->
+                            <div class="page-navigator" th:if="${resultBuilding.totalPages > 1}" style="margin-bottom: 20px;">
+                                <a class="nav-item" href="javascript:void(0)" th:onclick="'goToPage(1)'" title="Trang đầu">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </a>
+
+                                <th:block th:each="page: ${resultBuilding.navigationPages}">
+                                    <a th:if="${page != -1}"
+                                       th:class="${page == resultBuilding.currentPage} ? 'nav-item active-page' : 'nav-item'"
+                                       href="javascript:void(0)"
+                                       th:onclick="'goToPage(' + ${page} + ')'"
+                                       th:utext="${page}"></a>
+                                    <span th:if="${page == -1}" class="nav-item"> ... </span>
+                                </th:block>
+
+                                <a class="nav-item" href="javascript:void(0)"
+                                   th:onclick="'goToPage(' + ${resultBuilding.totalPages} + ')'" title="Trang cuối">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                            </div>
                         </div>
-                        <!-- /.span -->
                     </div>
                 </div>
                 <!-- /.page-content -->
@@ -381,8 +413,14 @@
         //TÌM KIẾM TÒA NHÀ
         $("#searchBuilding").click(function (e) {
             e.preventDefault();
+            $('#page').val(1);
             $("#building-search-form").submit();
         });
+
+        function goToPage(page) {
+            $('#page').val(page);
+            $('#building-search-form').submit();
+        }
 
         // call id dùng dấu #, class dùng dấu .
         //Xóa nhiều
@@ -450,10 +488,7 @@
                 alert("");
                 return;
             }
-            if (staffIds.length === 0) {
-                alert("");
-                return;// chan luon neu loi
-            }
+
             assignBuilding(json);
 
         });

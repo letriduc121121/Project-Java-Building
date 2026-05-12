@@ -1,10 +1,7 @@
 package com.devon.building.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.io.Serial;
@@ -16,6 +13,7 @@ import java.util.List;
 @Table(name = "User")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity implements Serializable {
@@ -54,6 +52,12 @@ public class User extends BaseEntity implements Serializable {
     @Lob
     @Column(name = "image", length = Integer.MAX_VALUE, nullable = true)
     private byte[] image;
+
+//    @Column(name = "facebook_account_id")
+//    private int facebookAccountId;
+//
+//    @Column(name = "google_account_id")
+//    private int googleAccountId;
 
     @ManyToMany(mappedBy = "staffs", fetch = FetchType.LAZY)
     private List<BuildingEntity> buildings = new ArrayList<>();

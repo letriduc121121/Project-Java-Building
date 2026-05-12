@@ -62,10 +62,15 @@
                            aria-haspopup="true" aria-expanded="false">
                             Hello
                         </a>
+
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <th:block sec:authorize="hasAnyRole('ROLE_MANAGER','ROLE_STAFF')">
+                                <a class="dropdown-item" th:href="@{/admin/buildings/list}">Admin</a>
+                            </th:block>
                             <a class="dropdown-item" th:href="@{/admin/logout}">Logout</a>
                         </div>
                     </li>
+                   
                 </th:block>
             </ul>
             <ul class="navbar-nav ml-auto">

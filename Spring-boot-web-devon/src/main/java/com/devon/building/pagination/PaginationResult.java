@@ -1,10 +1,16 @@
 package com.devon.building.pagination;
 
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Setter
+@Getter
+@NoArgsConstructor
 public class PaginationResult<E> {
 
     private int totalRecords;
@@ -22,6 +28,25 @@ public class PaginationResult<E> {
 
         // 1. Đếm số bản ghi
         this.totalRecords = countQuery.getSingleResult().intValue();
+
+        // 2. Tính tổng số trang
+        this.totalPages = (int) Math.ceil((double) totalRecords / maxResult);
+
+        // 3. Lấy dữ liệu phân trang
+        this.list = query.setFirstResult((currentPage - 1) * maxResult).setMaxResults(maxResult).getResultList();
+
+        // 4. Tính navigation
+        this.maxNavigationPage = Math.min(maxNavigationPage, totalPages);
+        calcNavigationPages();
+    }
+
+    public PaginationResult(Query query, int countQuery, int page, int maxResult, int maxNavigationPage) {
+
+        this.maxResult = maxResult;
+        this.currentPage = Math.max(page, 1);
+
+        // 1. Đếm số bản ghi
+        this.totalRecords = countQuery;
 
         // 2. Tính tổng số trang
         this.totalPages = (int) Math.ceil((double) totalRecords / maxResult);
