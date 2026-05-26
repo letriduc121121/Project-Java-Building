@@ -99,9 +99,9 @@ public class CustomerController {
         model.addAttribute("statuses", Status.getStatusMap());
         model.addAttribute("transactionType", buildTransactionTypeMap());
 
-        List<TransactionDTO> cskh = transactionRepository.findByCustomerIdAndCode(id, "CSKH")
+        List<TransactionDTO> cskh = transactionRepository.findByCustomerIdAndCodeAndActiveTrue(id, "CSKH")
                 .stream().map(this::toDTO).collect(Collectors.toList());
-        List<TransactionDTO> ddx = transactionRepository.findByCustomerIdAndCode(id, "DDX")
+        List<TransactionDTO> ddx = transactionRepository.findByCustomerIdAndCodeAndActiveTrue(id, "DDX")
                 .stream().map(this::toDTO).collect(Collectors.toList());
 
         model.addAttribute("CSKH", cskh);

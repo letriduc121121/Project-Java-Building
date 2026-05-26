@@ -22,11 +22,11 @@ public class User extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -2054386655979281969L;
 
     public static final String ROLE_MANAGER = "MANAGER";
-    public static final String ROLE_EMPLOYEE = "STAFF";
+    public static final String ROLE_STAFF = "STAFF";
     public static final String ROLE_USER = "USER";
 
 
-    @Column(name = "username", length = 20, nullable = false)
+    @Column(name = "username", length = 100, nullable = false)
     private String userName;
 
     @Column(name = "password", length = 128, nullable = false)
@@ -53,11 +53,8 @@ public class User extends BaseEntity implements Serializable {
     @Column(name = "image", length = Integer.MAX_VALUE, nullable = true)
     private byte[] image;
 
-//    @Column(name = "facebook_account_id")
-//    private int facebookAccountId;
-//
-//    @Column(name = "google_account_id")
-//    private int googleAccountId;
+    @Column(name = "email", length = 255, nullable = true)
+    private String email;
 
     @ManyToMany(mappedBy = "staffs", fetch = FetchType.LAZY)
     private List<BuildingEntity> buildings = new ArrayList<>();

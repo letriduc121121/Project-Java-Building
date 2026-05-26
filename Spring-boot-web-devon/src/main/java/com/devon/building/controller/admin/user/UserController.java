@@ -60,6 +60,16 @@ public class UserController {
 
     @GetMapping("/{userName}")
     public ModelAndView getUser(@PathVariable String userName, HttpServletRequest request) {
+        // Quyền bảo mật: Staff chỉ được xem/sửa thông tin của chính mình
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            boolean isManager = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
+            if (!isManager && !authentication.getName().equals(userName)) {
+                return new ModelAndView("redirect:/403");
+            }
+        }
+
         ModelAndView model = new ModelAndView("admin/user/userEdit");
         UserDTO userDTO = null;
         if (!userName.trim().isEmpty()) {
@@ -104,6 +114,17 @@ public class UserController {
 
     @GetMapping("/change-password/{id}")
     public ModelAndView resetPassword(@PathVariable Long id, HttpServletRequest request) {
+        // Quyền bảo mật: Staff chỉ được phép đổi mật khẩu của chính mình
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && id != null) {
+            User userEntity = userRepository.findById(id).orElseThrow();
+            boolean isManager = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
+            if (!isManager && !authentication.getName().equals(userEntity.getUserName())) {
+                return new ModelAndView("redirect:/403");
+            }
+        }
+
         ModelAndView modelAndView = new ModelAndView("admin/user/change-password");
         UserDTO user = null;
         if (id != null) {

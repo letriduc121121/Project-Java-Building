@@ -179,13 +179,13 @@
                                                             th:data-customer-id="${customerEdit.id}"
                                                             th:data-note="${transaction.note}"
                                                             onclick="editTransaction(this.dataset.id, this.dataset.code, this.dataset.customerId, this.dataset.note)">
-                                                            <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                            <i class="ace-icon fas fa-pencil-alt bigger-120"></i>
                                                         </a>
                                                         <button sec:authorize="hasRole('MANAGER')"
                                                             class="btn btn-xs btn-danger" title="Xóa"
                                                             th:data-id="${transaction.id}"
                                                             onclick="deleteTransaction(this.dataset.id)">
-                                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                            <i class="ace-icon fas fa-trash-alt bigger-120"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -223,13 +223,13 @@
                                                             th:data-customer-id="${customerEdit.id}"
                                                             th:data-note="${transaction.note}"
                                                             onclick="editTransaction(this.dataset.id, this.dataset.code, this.dataset.customerId, this.dataset.note)">
-                                                            <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                            <i class="ace-icon fas fa-pencil-alt bigger-120"></i>
                                                         </a>
                                                         <button sec:authorize="hasRole('MANAGER')"
                                                             class="btn btn-xs btn-danger" title="Xóa"
                                                             th:data-id="${transaction.id}"
                                                             onclick="deleteTransaction(this.dataset.id)">
-                                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                            <i class="ace-icon fas fa-trash-alt bigger-120"></i>
                                                         </button>
                                                     </td>
                                                 </tr>

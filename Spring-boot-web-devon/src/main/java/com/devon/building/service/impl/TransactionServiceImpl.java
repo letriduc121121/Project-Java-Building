@@ -30,6 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
         entity.setCode(dto.getCode());
         entity.setNote(dto.getNote());
         entity.setCustomer(customer);
+        entity.setActive(true);
         return transactionRepository.save(entity);
     }
 
@@ -46,6 +47,8 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public void deleteTransactions(List<Long> ids) {
-        transactionRepository.deleteAllById(ids);
+        ids.forEach(id -> transactionRepository.findById(id)
+                .ifPresent(transaction -> transaction.setActive(false)));
+        transactionRepository.flush();
     }
 }

@@ -51,7 +51,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label no-padding-right">Vai trò</label>
                                 <div class="col-sm-5">
-                                    <select class="form-control" name="roleCode">
+                                    <select class="form-control" name="roleCode" th:disabled="${!#authorization.expression('hasRole(''MANAGER'')')}">
                                         <option value="">--- Chọn vai trò ---</option>
                                         <option th:each="r : ${user.roleDTO}"
                                                 th:value="${r.key}"
@@ -156,7 +156,7 @@
             document.getElementById("noFullName").style.display = "block";
             isValid = false;
         }
-        if (json['roleCode'] === '') {
+        if (json['roleCode'] === '' && !$('select[name="roleCode"]').is(':disabled')) {
             document.getElementById("noRole").style.display = "block";
             isValid = false;
         }

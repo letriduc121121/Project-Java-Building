@@ -169,7 +169,7 @@ public class BuildingServiceImpl implements BuildingService {
     public ResponseDTO loadStaffByBuildingId(Long id) {
         ResponseDTO responseDTO = new ResponseDTO();
 
-        List<User> allStaff = userRepository.findByActiveAndUserRole(true, "ROLE_" + User.ROLE_EMPLOYEE);
+        List<User> allStaff = userRepository.findByActiveAndUserRole(true, "ROLE_" + User.ROLE_STAFF);
 
         // Lấy building với staff list thông qua ManyToMany relationship
         BuildingEntity building = buildingRepository.findById(id)
@@ -186,7 +186,7 @@ public class BuildingServiceImpl implements BuildingService {
         for (User user : allStaff) {
             StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
             staffResponseDTO.setId(user.getId());
-            staffResponseDTO.setUsername(user.getFullName());
+            staffResponseDTO.setUsername(user.getUserName());
             staffResponseDTO.setChecked("");
             if (assignedStaffIds.contains(user.getId())) {
                 staffResponseDTO.setChecked("checked");

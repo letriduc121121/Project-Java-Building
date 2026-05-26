@@ -1,6 +1,7 @@
 package com.devon.building.service.impl;
 
 import com.devon.building.constant.SystemConstant;
+import com.devon.building.convert.CustomerConvertor;
 import com.devon.building.entity.CustomerEntity;
 import com.devon.building.entity.User;
 import com.devon.building.model.dto.AssignCustomerDTO;
@@ -33,6 +34,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomerConvertor customerConvertor;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -119,28 +123,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerEntity create(CustomerDTO dto) {
-        CustomerEntity entity = new CustomerEntity();
-        entity.setFullName(dto.getFullName());
-        entity.setPhone(dto.getPhone());
-        entity.setEmail(dto.getEmail());
-        entity.setCompanyName(dto.getCompanyName());
-        entity.setDemand(dto.getDemand());
-        entity.setStatus(dto.getStatus());
-        entity.setIsActive(1);//mac dinh tao active=1
+        CustomerEntity entity = customerConvertor.toCustomerEntity(dto);
         return customerRepository.saveAndFlush(entity);
     }
 
     @Override
     @Transactional
     public CustomerEntity update(CustomerDTO dto) {
-        CustomerEntity entity = customerRepository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-        entity.setFullName(dto.getFullName());
-        entity.setPhone(dto.getPhone());
-        entity.setEmail(dto.getEmail());
-        entity.setCompanyName(dto.getCompanyName());
-        entity.setDemand(dto.getDemand());
-        entity.setStatus(dto.getStatus());
+        CustomerEntity entity = customerConvertor.toCustomerEntity(dto);
         return customerRepository.saveAndFlush(entity);
     }
 
@@ -158,7 +148,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerEntity customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        List<User> allStaff = userRepository.findByActiveAndUserRole(true, "ROLE_" + User.ROLE_EMPLOYEE);
+        List<User> allStaff = userRepository.findByActiveAndUserRole(true, "ROLE_" + User.ROLE_STAFF);
 
         Set<Long> assignedIds = customer.getStaffs().stream()
                 .map(User::getId)
@@ -168,7 +158,7 @@ public class CustomerServiceImpl implements CustomerService {
         for (User user : allStaff) {
             StaffResponseDTO dto = new StaffResponseDTO();
             dto.setId(user.getId());
-            dto.setUsername(user.getFullName());
+            dto.setUsername(user.getUserName());
             dto.setChecked(assignedIds.contains(user.getId()) ? "checked" : "");
             result.add(dto);
         }

@@ -30,6 +30,11 @@
                         <i class="fas fa-ban me-2"></i>
                         Username or password incorrect
                     </div>
+
+                    <div th:if="${param.googleError}" class="alert alert-danger">
+                        <i class="fab fa-google me-2"></i>
+                        Google login failed. Please try again or contact admin.
+                    </div>
                     <!-- Session Timeout -->
                     <div class="alert alert-danger" th:if="${param.sessionTimeout}">
                         <i class="fas fa-clock me-2"></i>
@@ -76,7 +81,7 @@
                             <a href="#" class="social-btn" title="Register with Facebook">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a href="@{/oauth2/authorization/google}" class="social-btn" title="Login with Google">
+                            <a th:href="@{/oauth2/authorization/google}" class="social-btn" title="Login with Google">
                                 <i class="fab fa-google"></i>
                             </a>
                             <a href="#" class="social-btn" title="Register with Twitter">

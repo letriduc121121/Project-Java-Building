@@ -44,8 +44,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             
             final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                // Nếu là request đến trang web (không phải API), có thể cho qua để Spring Security xử lý Form Login
-                // Nhưng ở đây ta đang làm JWT, nên ta sẽ trả về Unauthorized nếu là API
+
                 if (request.getServletPath().startsWith("/api/")) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                     return;

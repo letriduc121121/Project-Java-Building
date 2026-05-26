@@ -46,13 +46,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User createUser(UserDTO userDTO) throws Exception {
         String userName = userDTO.getUserName();
-        if(userRepository.existsByUserName(userName)) {
+        if (userRepository.existsByUserName(userName)) {
             throw new RuntimeException("Username already exists");
         }
 
         // Đăng ký mặc định luôn là ROLE_USER
         String roleStr = "ROLE_USER";
-        
+
         // tranh error DB do phone not null
         String phone = userDTO.getPhoneNumber() != null ? userDTO.getPhoneNumber() : "";
 
@@ -78,14 +78,15 @@ public class UserServiceImpl implements UserService {
 
         StringBuilder sql = new StringBuilder(
                 "SELECT NEW " + User.class.getName() +
-                        "(u.id, u.userName, u.active, u.userRole, u.fullName, u.phone) "
-        ).append(baseQuery);
+                        "(u.id, u.userName, u.active, u.userRole, u.fullName, u.phone) ")
+                .append(baseQuery);
 
         StringBuilder countSql = new StringBuilder("SELECT COUNT(u.id)").append(baseQuery);
 
         if (isNotEmpty(key)) {
             sql.append(" AND (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key)");
-            countSql.append(" AND (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key)");
+            countSql.append(
+                    " AND (LOWER(u.userName) LIKE :key OR LOWER(u.fullName) LIKE :key OR LOWER(u.phone) LIKE :key)");
         }
 
         sql.append(" ORDER BY u.userName DESC");
@@ -136,9 +137,33 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("User " + userName + " not found");
         }
 
+        // Quyền bảo mật: chỉ MANAGER mới có quyền đổi role của user khác hoặc edit user
+        // khác
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (authentication != null) {
+            boolean isManager = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
+            if (!isManager) {
+                if (!authentication.getName().equals(userName)) {
+                    throw new org.springframework.security.access.AccessDeniedException(
+                            "You do not have permission to update this user.");
+                }
+                // Giữ nguyên role của staff hiện tại
+            } else {
+                if (userDTO.getRoleCode() != null && !userDTO.getRoleCode().trim().isEmpty()) {
+                    user.setUserRole(userDTO.getRoleCode());
+                }
+            }
+        } else {
+            if (userDTO.getRoleCode() != null && !userDTO.getRoleCode().trim().isEmpty()) {
+                user.setUserRole(userDTO.getRoleCode());
+            }
+        }
+
         user.setUserName(userName);
         user.setActive(true);
-        user.setUserRole(userDTO.getRoleCode());
+        user.setFullName(userDTO.getFullName());
 
         convertToByte(userDTO, user);
 
@@ -157,13 +182,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<Long, String> getAllStaff() {
         return userRepository
-                .findByActiveAndUserRole(true, "ROLE_" + User.ROLE_EMPLOYEE)
+                .findByActiveAndUserRole(true, "ROLE_" + User.ROLE_STAFF)
                 .stream()
                 .collect(Collectors.toMap(User::getId, User::getFullName));
     }
 
     @Override
-    public User getUserByUserName(String  userName) {
+    public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName);
 
     }

@@ -21,11 +21,9 @@ public class UserDTO extends AbstractDTO {
     @NotBlank(message = "UserName is required")
     private String userName;
 
-    @JsonProperty("fullname")
     @NotBlank(message = "FullName is required")
     private String fullName;
 
-    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     @JsonProperty("retype_password")

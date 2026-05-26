@@ -2,6 +2,7 @@ package com.devon.building.config;
 
 
 import com.devon.building.filter.JwtTokenFilter;
+import com.devon.building.security.oauth2.DatabaseOidcUserService;
 import com.devon.building.security.CustomSuccessHandler;
 import com.devon.building.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -26,17 +27,14 @@ public class WebSecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtTokenFilter jwtTokenFilter;
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final DatabaseOidcUserService databaseOidcUserService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
@@ -48,7 +46,8 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login", "/register", "/api/users/register", "/contact", "/api/contact").permitAll()
-                        .requestMatchers("/admin/users/list", "/admin/users", "/admin/users/**").hasRole("MANAGER")
+                        .requestMatchers("/admin/users/list", "/admin/users").hasRole("MANAGER")
+                        .requestMatchers("/admin/users/**").hasAnyRole("STAFF", "MANAGER")
                         .requestMatchers("/admin/api/customers/assign").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/admin/api/buildings/assign").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/admin/api/buildings/*/staffs").hasRole("MANAGER")
@@ -60,11 +59,17 @@ public class WebSecurityConfig {
                         .loginPage("/admin/login")
                         .loginProcessingUrl("/j_spring_security_check")
                         .successHandler(myAuthenticationSuccessHandler())
-//                        .defaultSuccessUrl("/admin/accountInfo", true)
                         .failureUrl("/admin/login?incorrectAccount")
                         .usernameParameter("userName")
                         .passwordParameter("password")
                         .permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .oidcUserService(databaseOidcUserService))
+                        .successHandler(myAuthenticationSuccessHandler())
+                        .failureUrl("/login?oauth2Error")
                 )
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
@@ -72,12 +77,11 @@ public class WebSecurityConfig {
                         .permitAll()
                 );
 
-
         return http.build();
     }
 
     @Bean
-    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+    public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
         return new CustomSuccessHandler();
     }
 }

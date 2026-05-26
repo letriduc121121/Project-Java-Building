@@ -10,6 +10,9 @@ import lombok.Setter;
 @Setter
 public class TransactionEntity extends BaseEntity {
 
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
+
     @Column(name = "code")
     private String code;
 
